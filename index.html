@@ -2384,27 +2384,35 @@
 
     async function loadUserData(uid) {
         try {
+            console.log('📥 Buscando dados do usuário:', uid);
+
             const userDoc = await db.collection('users').doc(uid).get();
+
             if (userDoc.exists) {
                 currentUserData = { ...userDoc.data(), uid };
+                console.log('✅ Dados do usuário carregados:', currentUserData);
 
                 // Carregar apostas do usuário
+                console.log('📥 Carregando apostas...');
                 await loadUserBets();
 
                 // Atualizar a interface do usuário
+                console.log('🎨 Atualizando interface...');
                 updateUserDisplay();
 
-                // Mostrar a seção principal
-                showMainApp();
+                console.log('✅ Dados do usuário prontos!');
             } else {
-                // Se o documento não existe, criar um novo
+                console.log('⚠️ Usuário não existe no banco. Criando...');
                 await createNewUserData(uid);
             }
         } catch (error) {
-            console.error('Erro ao carregar dados do usuário:', error);
-            showNotification('❌ Erro ao carregar dados do usuário!', 'error');
+            console.error('❌ Erro ao carregar dados do usuário:', error);
+            console.error('Detalhes:', error.message, error.stack);
+            showNotification('❌ Erro ao carregar dados: ' + error.message, 'error');
+            throw error; // Re-throw para o handler acima
         }
     }
+
     async function createNewUserData(uid) {
         const newUserData = {
             uid,
@@ -2627,30 +2635,100 @@
     // ==================== SISTEMA DE TIMER E ATUALIZAÇÕES ====================
 
     function initTimer() {
-        // A função updateTimer será chamada pelo listener do documento global
-        function updateTimer(nextDrawTime) {
-            if (!nextDrawTime) return;
+        console.log('🕐 Inicializando timer...');
 
-            const now = new Date();
-            const nextDraw = nextDrawTime.toDate();
-            const diff = nextDraw - now;
+        // Listener para o documento global
+        const unsubscribe = db.collection('system').doc('global')
+            .onSnapshot((doc) => {
+                if (!doc.exists) {
+                    console.warn('⚠️ Documento global não existe');
+                    document.getElementById('drawTimer').textContent = '--:--';
+                    return;
+                }
 
-            if (diff <= 0) {
-                document.getElementById('drawTimer').textContent = '00:00';
-                return;
+                const data = doc.data();
+
+                // Atualizar jackpot
+                if (data.jackpot !== undefined) {
+                    const jackpotEl = document.getElementById('jackpotAmount');
+                    if (jackpotEl) {
+                        jackpotEl.textContent = `R$ ${data.jackpot.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                    }
+                }
+
+                // Atualizar jogadores online
+                if (data.onlinePlayers !== undefined) {
+                    const onlineElements = document.querySelectorAll('.header-card:nth-child(3) .stat-value, .header-card:nth-child(3) div[style*="font-size: 32px"]');
+                    onlineElements.forEach(el => {
+                        el.textContent = data.onlinePlayers.toLocaleString();
+                    });
+                }
+
+                // Atualizar número do sorteio
+                if (data.drawNumber) {
+                    const drawNumElements = document.querySelectorAll('.header-card:nth-child(2) > div:last-child');
+                    drawNumElements.forEach(el => {
+                        el.textContent = `Sorteio #${data.drawNumber}`;
+                    });
+                }
+
+                console.log('📊 Dados atualizados:', {
+                    jackpot: data.jackpot,
+                    drawNumber: data.drawNumber,
+                    onlinePlayers: data.onlinePlayers,
+                    nextDrawTime: data.nextDrawTime?.toDate().toLocaleString('pt-BR')
+                });
+
+            }, (error) => {
+                console.error('❌ Erro ao escutar global:', error);
+            });
+
+        // Armazenar unsubscribe
+        if (window.unsubscribeGlobal) window.unsubscribeGlobal();
+        window.unsubscribeGlobal = unsubscribe;
+
+        // Atualizar timer a cada segundo
+        setInterval(async () => {
+            try {
+                const globalDoc = await db.collection('system').doc('global').get();
+
+                if (!globalDoc.exists) {
+                    document.getElementById('drawTimer').textContent = '--:--';
+                    return;
+                }
+
+                const data = globalDoc.data();
+
+                if (!data.nextDrawTime) {
+                    document.getElementById('drawTimer').textContent = '--:--';
+                    return;
+                }
+
+                const nextDrawTime = data.nextDrawTime.toDate();
+                const now = new Date();
+                const diff = nextDrawTime - now;
+
+                if (diff <= 0) {
+                    document.getElementById('drawTimer').textContent = '00:00';
+                    return;
+                }
+
+                const minutesLeft = Math.floor(diff / (1000 * 60));
+                const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
+
+                const timerEl = document.getElementById('drawTimer');
+                if (timerEl) {
+                    timerEl.textContent =
+                        `${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
+                }
+
+            } catch (error) {
+                console.error('❌ Erro ao atualizar timer:', error);
+                document.getElementById('drawTimer').textContent = '--:--';
             }
-
-            const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById('drawTimer').textContent =
-                `${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
-        }
-
-        // O timer será atualizado a cada segundo
-        setInterval(() => {
-            // O timer é atualizado pelo listener, então não precisamos fazer nada aqui
         }, 1000);
+
+        console.log('✅ Timer inicializado');
     }
     async function getTodayBets() {
         if (!currentUser) return 0;
@@ -2720,56 +2798,7 @@
         }
     }
 
-    function initializeDrawSystem() {
-        // Listener para o documento global
-        unsubscribeGlobal = db.collection('system').doc('global')
-            .onSnapshot((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
 
-                    // Atualizar o timer do próximo sorteio
-                    if (data.nextDrawTime) {
-                        const nextDrawTime = data.nextDrawTime.toDate();
-                        const now = new Date();
-                        const diff = nextDrawTime - now;
-
-                        let minutesLeft = 0;
-                        let secondsLeft = 0;
-
-                        if (diff > 0) {
-                            minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                            secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
-                        }
-
-                        document.getElementById('drawTimer').textContent =
-                            `${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
-                    }
-
-                    // Atualizar o jackpot
-                    if (data.jackpot) {
-                        document.getElementById('jackpotAmount').textContent = `R$ ${data.jackpot.toFixed(2)}`;
-                    }
-
-                    // Atualizar número do sorteio
-                    if (data.drawNumber) {
-                        const drawNumberElement = document.querySelector('.draw-timer').nextElementSibling;
-                        if (drawNumberElement) {
-                            drawNumberElement.textContent = `Sorteio #${data.drawNumber}`;
-                        }
-                    }
-
-                    // Atualizar jogadores online
-                    if (data.onlinePlayers !== undefined) {
-                        const onlineElement = document.querySelector('.header-card:nth-child(3) .stat-value');
-                        if (onlineElement) {
-                            onlineElement.textContent = data.onlinePlayers;
-                        }
-                    }
-                }
-            }, (error) => {
-                console.error('Erro ao escutar global:', error);
-            });
-    }
     function initAuthTabs() {
         const tabs = document.querySelectorAll('.auth-tab');
         const forms = document.querySelectorAll('.auth-form');
@@ -4034,51 +4063,6 @@
 
 
     // ==================== TIMER DE COUNTDOWN ====================
-    function startDrawTimer() {
-        async function updateTimer() {
-            try {
-                const globalDoc = await db.collection('system').doc('global').get();
-                if (!globalDoc.exists) {
-                    document.getElementById('drawTimer').textContent = '--:--';
-                    return;
-                }
-
-                const data = globalDoc.data();
-                if (!data.nextDrawTime) {
-                    document.getElementById('drawTimer').textContent = '--:--';
-                    return;
-                }
-
-                const nextDrawTime = data.nextDrawTime.toDate();
-                const now = new Date();
-                const diff = nextDrawTime - now;
-
-                if (diff <= 0) {
-                    document.getElementById('drawTimer').textContent = '00:00';
-                    document.getElementById('drawTimer').style.animation = 'pulse 1s infinite';
-                    return;
-                }
-
-                const minutesLeft = Math.floor(diff / (1000 * 60));
-                const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
-
-                document.getElementById('drawTimer').textContent =
-                    `${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
-
-                // Remover animação quando não estiver em 00:00
-                document.getElementById('drawTimer').style.animation = '';
-
-            } catch (error) {
-                console.error('Erro ao atualizar timer:', error);
-            }
-        }
-
-        // Atualizar imediatamente
-        updateTimer();
-
-        // Atualizar a cada segundo
-        setInterval(updateTimer, 1000);
-    }
 
     // ==================== PROCESSAR RESULTADO DO SORTEIO ====================
     async function processDrawResult(draw) {
@@ -4269,36 +4253,148 @@
             console.error('Erro ao fazer logout:', error);
         }
     }
+    async function initializeGlobalDrawSystem() {
+        try {
+            console.log('🚀 Iniciando sistema global...');
 
-    // ==================== INICIALIZAÇÃO ====================
-    // Substituir a chamada de initializeGlobalDrawSystem() por:
+            const globalRef = db.collection('system').doc('global');
+            const globalDoc = await globalRef.get();
+
+            if (!globalDoc.exists) {
+                console.log('⚠️ Sistema não inicializado. Criando documento global...');
+
+                const now = new Date();
+                const minutes = now.getMinutes();
+                const nextMinutes = Math.ceil(minutes / 5) * 5;
+
+                const nextDraw = new Date(now);
+                nextDraw.setMinutes(nextMinutes, 0, 0);
+
+                if (nextMinutes >= 60) {
+                    nextDraw.setHours(nextDraw.getHours() + 1);
+                    nextDraw.setMinutes(0, 0, 0);
+                }
+
+                await globalRef.set({
+                    jackpot: 25847.50,
+                    nextDrawTime: firebase.firestore.Timestamp.fromDate(nextDraw),
+                    drawNumber: 202412345,
+                    onlinePlayers: 0,
+                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                console.log('✅ Sistema inicializado com sucesso!');
+                console.log('📅 Próximo sorteio:', nextDraw.toLocaleString('pt-BR'));
+            } else {
+                console.log('✅ Sistema já inicializado');
+                const data = globalDoc.data();
+                console.log('📊 Dados do sistema:');
+                console.log('   - Jackpot: R$', data.jackpot);
+                console.log('   - Draw Number:', data.drawNumber);
+                console.log('   - Próximo sorteio:', data.nextDrawTime?.toDate().toLocaleString('pt-BR'));
+                console.log('   - Jogadores online:', data.onlinePlayers);
+            }
+        } catch (error) {
+            console.error('❌ ERRO ao inicializar sistema global:', error);
+            console.error('Detalhes:', error.message);
+            throw error;
+        }
+    }
+    // ==================== INICIALIZAÇÃO PRINCIPAL ====================
     auth.onAuthStateChanged(async (user) => {
+        console.log('🔄 Estado de autenticação mudou:', user ? user.email : 'Nenhum usuário');
+
         if (user) {
-            currentUser = user;
-            await loadUserData(user.uid);
-            initializeDrawSystem(); // Inicializar o sistema de sorteio
-            showMainApp();
-            updateGameStats();
+            try {
+                currentUser = user;
+                console.log('✅ Usuário autenticado:', user.email);
+
+                // 1. Inicializar sistema global PRIMEIRO
+                console.log('⏳ Inicializando sistema global...');
+                await initializeGlobalDrawSystem();
+
+                // 2. Carregar dados do usuário
+                console.log('⏳ Carregando dados do usuário...');
+                await loadUserData(user.uid);
+
+                // 3. Marcar presença online
+                console.log('⏳ Marcando presença online...');
+                await updateUserPresence(true);
+
+                // 4. Iniciar timer
+                console.log('⏳ Iniciando timer...');
+                initTimer();
+
+                // 5. Mostrar app
+                console.log('⏳ Mostrando interface...');
+                showMainApp();
+
+                console.log('✅ App totalmente inicializado!');
+
+            } catch (error) {
+                console.error('❌ ERRO CRÍTICO na inicialização:', error);
+                showNotification('❌ Erro ao inicializar: ' + error.message, 'error');
+            }
         } else {
+            console.log('👋 Usuário desconectado');
             currentUser = null;
             currentUserData = null;
 
             // Limpar listeners
-            if (unsubscribeGlobal) {
-                unsubscribeGlobal();
-                unsubscribeGlobal = null;
-            }
-            if (unsubscribeDraws) {
-                unsubscribeDraws();
-                unsubscribeDraws = null;
+            if (window.unsubscribeGlobal) {
+                window.unsubscribeGlobal();
+                window.unsubscribeGlobal = null;
             }
         }
     });
 
+    // ==================== DIAGNÓSTICO ====================
+    window.diagnosticar = async function() {
+        console.log('\n========== DIAGNÓSTICO DO SISTEMA ==========\n');
 
+        // 1. Verificar Firebase
+        console.log('1️⃣ Firebase inicializado:', !!firebase.apps.length);
+        console.log('   Auth:', !!auth);
+        console.log('   Firestore:', !!db);
 
+        // 2. Verificar autenticação
+        console.log('\n2️⃣ Usuário atual:', currentUser ? currentUser.email : 'Nenhum');
+        console.log('   Dados do usuário:', currentUserData ? 'OK' : 'Não carregado');
 
+        // 3. Verificar documento global
+        try {
+            const globalDoc = await db.collection('system').doc('global').get();
+            console.log('\n3️⃣ Documento global:', globalDoc.exists ? 'EXISTE' : 'NÃO EXISTE');
+            if (globalDoc.exists) {
+                const data = globalDoc.data();
+                console.log('   Jackpot:', data.jackpot);
+                console.log('   Draw Number:', data.drawNumber);
+                console.log('   Next Draw:', data.nextDrawTime?.toDate().toLocaleString('pt-BR'));
+                console.log('   Online Players:', data.onlinePlayers);
+            }
+        } catch (error) {
+            console.error('❌ Erro ao verificar global:', error);
+        }
 
+        // 4. Verificar elementos da UI
+        console.log('\n4️⃣ Elementos da UI:');
+        console.log('   Timer element:', !!document.getElementById('drawTimer'));
+        console.log('   Jackpot element:', !!document.getElementById('jackpotAmount'));
+        console.log('   Balance element:', !!document.getElementById('userBalance'));
+
+        // 5. Verificar listeners
+        console.log('\n5️⃣ Listeners:', window.unsubscribeGlobal ? 'Ativo' : 'Não ativo');
+
+        console.log('\n==========================================\n');
+    };
+
+    // Executar diagnóstico automaticamente após 3 segundos do login
+    setTimeout(() => {
+        if (currentUser) {
+            console.log('🔍 Executando diagnóstico automático...');
+            window.diagnosticar();
+        }
+    }, 3000);
 
 
 
