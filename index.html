@@ -1105,6 +1105,840 @@
                 grid-template-columns: 1fr;
             }
         }
+
+
+        /* ===== ESTILOS AUSENTES ===== */
+
+        /* Botões gerais */
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-gradient-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Grupos de formulário */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--light);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Logotipo da navegação */
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-icon {
+            background: var(--accent-gradient);
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+            transition: var(--transition);
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        /* Container principal para animação */
+        .container.active {
+            display: block;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        /* Animações adicionais */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+
+        /* Cards de confirmação */
+        .confirm-bet-card {
+            background: var(--light-secondary);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            border: 2px solid var(--border);
+        }
+
+        .confirm-bet-card h4 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        /* Badges de status */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        /* Elementos de lista */
+        .list-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .list-item:hover {
+            background: var(--light-secondary);
+        }
+
+        /* Alertas */
+        .alert {
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 2px solid;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--info);
+            color: var(--info);
+        }
+
+        /* Ícones animados */
+        .icon-spin {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-secondary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-dark);
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-track {
+            background: var(--dark-secondary);
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: var(--accent-light);
+        }
+
+        /* Container para modais */
+        .modal-container {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Texto de ajuda */
+        .help-text {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Grid de animais responsivo */
+        @media (max-width: 640px) {
+            .animals-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .animal-card {
+                padding: 15px;
+            }
+
+            .bet-amount-control {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .amount-btn {
+                padding: 15px;
+                font-size: 16px;
+            }
+        }
+
+        /* Estados de loading */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--light-secondary);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Efeitos de hover para cartões */
+        .card-hover-effect {
+            transition: var(--transition);
+        }
+
+        .card-hover-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Texto com gradiente */
+        .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        /* Container flexível */
+        .flex-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Utilitários de espaçamento */
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+        .mt-40 { margin-top: 40px; }
+        .mb-40 { margin-bottom: 40px; }
+
+        /* Text utilities */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-left { text-align: left; }
+
+        /* Display utilities */
+        .d-flex { display: flex; }
+        .d-grid { display: grid; }
+        .d-none { display: none; }
+
+        /* Gap utilities */
+        .gap-10 { gap: 10px; }
+        .gap-20 { gap: 20px; }
+        .gap-30 { gap: 30px; }
+
+        /* ===== CORREÇÕES ESPECÍFICAS ===== */
+
+        /* Corrigir exibição do tutorial modal */
+        .tutorial-modal-step {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tutorial-modal-step.active {
+            display: block;
+        }
+
+        /* Ajustar botões do tutorial */
+        .tutorial-modal-step .btn {
+            margin-top: 20px;
+        }
+
+        /* Melhorar responsividade dos botões de aposta rápida */
+        @media (max-width: 768px) {
+            .quick-bets {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .quick-bet-btn {
+                font-size: 14px;
+                padding: 12px 16px;
+            }
+        }
+
+        /* Corrigir altura dos inputs em telas pequenas */
+        @media (max-width: 480px) {
+            .form-control,
+            .amount-input {
+                font-size: 16px;
+                padding: 14px 16px;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+        }
+
+        /* Garantir que os modais sejam responsivos */
+        .modal-content {
+            width: 95%;
+            margin: 0 auto;
+        }
+
+        /* Ajustar cards de animais em telas muito pequenas */
+        @media (max-width: 375px) {
+            .animals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card {
+                padding: 25px;
+            }
+        }
+
+        /* Melhorar acessibilidade para foco */
+        :focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* Corrigir transições suaves para tema escuro */
+        [data-theme="dark"] {
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Estilos para placeholder em inputs */
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--text-tertiary);
+            opacity: 0.8;
+        }
+
+        /* Melhorar legibilidade em telas pequenas */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+
+            h1 { font-size: 32px; }
+            h2 { font-size: 24px; }
+            h3 { font-size: 20px; }
+        }
+
+        /* Adicionar efeito de brilho em botões selecionados */
+        .bet-type-btn.active,
+        .amount-option.selected,
+        .payment-method.selected {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bet-type-btn.active::after,
+        .amount-option.selected::after,
+        .payment-method.selected::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                    45deg,
+                    transparent 30%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    transparent 70%
+            );
+            animation: shine 3s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        /* ===== NAVEGAÇÃO RESPONSIVA ===== */
+
+        /* Menu Hambúrguer */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            z-index: 1001;
+        }
+
+        .menu-toggle:hover {
+            background: var(--light-secondary);
+        }
+
+        /* User Info para mobile */
+        .user-info-mobile {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Navegação Principal */
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+            align-items: center;
+        }
+
+        /* Logo reduzida para mobile */
+        .logo-mobile {
+            display: none;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Container da navegação ajustado */
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* User info ajustado */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Balance ajustado para mobile */
+        .user-balance {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* ===== RESPONSIVIDADE ===== */
+
+        @media (max-width: 1200px) {
+            .nav-links {
+                gap: 30px;
+            }
+
+            .user-info {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            nav {
+                padding: 20px 30px;
+            }
+
+            nav.scrolled {
+                padding: 15px 30px;
+            }
+
+            .nav-links {
+                gap: 25px;
+            }
+
+            .user-balance {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 868px) {
+            /* Menu hamburguer aparece */
+            .menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 44px;
+                height: 44px;
+            }
+
+            /* Esconde os links de navegação principais */
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 300px;
+                height: 100vh;
+                background: var(--card-bg);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: flex-start;
+                padding: 100px 30px 30px;
+                gap: 0;
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 1000;
+                border-left: 1px solid var(--border);
+                box-shadow: var(--shadow-dark);
+                overflow-y: auto;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            /* Overlay para o menu */
+            .nav-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(5px);
+                z-index: 999;
+            }
+
+            .nav-overlay.active {
+                display: block;
+            }
+
+            /* Itens do menu mobile */
+            .nav-links li {
+                width: 100%;
+                margin: 0;
+            }
+
+            .nav-links a {
+                width: 100%;
+                padding: 18px 20px;
+                border-radius: var(--radius-md);
+                margin: 5px 0;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                font-size: 16px;
+                color: var(--text-primary);
+                background: none;
+                border: 2px solid transparent;
+                transition: var(--transition);
+            }
+
+            .nav-links a:hover,
+            .nav-links a.active {
+                background: var(--light-secondary);
+                border-color: var(--accent);
+                color: var(--accent);
+                transform: translateX(5px);
+            }
+
+            /* Logo desktop escondida em mobile */
+            .logo {
+                display: none;
+            }
+
+            /* Logo mobile aparece */
+            .logo-mobile {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .logo-icon-mobile {
+                background: var(--accent-gradient);
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 18px;
+                transition: var(--transition);
+            }
+
+            /* User info desktop escondido */
+            .user-info {
+                display: none;
+            }
+
+            /* User info mobile aparece */
+            .user-info-mobile {
+                display: flex;
+            }
+
+            /* Ajusta o container da navegação */
+            .nav-container {
+                justify-content: space-between;
+            }
+
+            /* Botão de logout mobile */
+            .logout-btn-mobile {
+                width: 100%;
+                margin-top: 20px;
+                padding: 16px;
+                background: var(--light-secondary);
+                color: var(--text-primary);
+                border: 2px solid var(--border);
+                border-radius: var(--radius-md);
+                font-weight: 600;
+                cursor: pointer;
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .logout-btn-mobile:hover {
+                background: rgba(239, 68, 68, 0.1);
+                border-color: var(--danger);
+                color: var(--danger);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 280px;
+                padding: 90px 20px 20px;
+            }
+
+            .logo-mobile span {
+                font-size: 20px;
+            }
+
+            .menu-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 12px 15px;
+            }
+
+            nav.scrolled {
+                padding: 10px 15px;
+            }
+
+            .nav-links {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .logo-mobile {
+                font-size: 20px;
+            }
+
+            .logo-icon-mobile {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+
+            .menu-toggle {
+                width: 36px;
+                height: 36px;
+                font-size: 20px;
+            }
+
+            .nav-links a {
+                padding: 16px 15px;
+                font-size: 15px;
+            }
+
+            .user-info-mobile {
+                gap: 12px;
+                margin-top: 25px;
+                padding-top: 15px;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .logo-mobile span {
+                display: none;
+            }
+
+            .logo-mobile {
+                gap: 8px;
+            }
+
+            .nav-links {
+                width: 100%;
+            }
+        }
+        /* ===== FIM DOS ESTILOS AUSENTES ===== */
     </style>
 </head>
 <body>
@@ -1174,57 +2008,94 @@
 </div>
 
 <!-- Navigation -->
+<!-- Navigation -->
 <nav id="navbar" style="display: none;">
     <div class="nav-container">
-        <a href="#" class="logo" onclick="showSection('home'); return false;" style="font-size: 32px; font-weight: 900; letter-spacing: -0.5px; color: var(--primary); display: flex; align-items: center; gap: 12px; transition: var(--transition); text-decoration: none;">
-            <div class="logo-icon" style="background: var(--accent-gradient); width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; transition: var(--transition);">
+        <!-- Logo Mobile -->
+        <a href="#" class="logo-mobile" onclick="showSection('home'); return false;">
+            <div class="logo-icon-mobile">
+                <i class="fas fa-dice"></i>
+            </div>
+            <span>Banca Marcos</span>
+        </a>
+
+        <!-- Logo Desktop -->
+        <a href="#" class="logo" onclick="showSection('home'); return false;">
+            <div class="logo-icon">
                 <i class="fas fa-dice"></i>
             </div>
             Banca Marcos
         </a>
 
-        <ul class="nav-links" style="display: flex; gap: 40px; list-style: none; align-items: center;">
-            <li><a href="#" onclick="showSection('home'); return false;"><i class="fas fa-home"></i> Início</a></li>
-            <li><a href="#" onclick="showSection('betting'); return false;"><i class="fas fa-coins"></i> Apostas</a></li>
-            <li><a href="#" onclick="showSection('results'); return false;"><i class="fas fa-trophy"></i> Resultados</a></li>
-            <li><a href="#" onclick="showPromotions(); return false;"><i class="fas fa-gift"></i> Promo</a></li>
-            <li><a href="#" onclick="showSection('settings'); return false;"><i class="fas fa-cog"></i> Configurações</a></li>
-            <li><a href="#" onclick="showSection('help'); return false;"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+        <!-- Menu Hambúrguer -->
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Overlay do Menu -->
+        <div class="nav-overlay" id="navOverlay"></div>
+
+        <!-- Links de Navegação -->
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#" onclick="showSection('home'); closeMobileMenu(); return false;"><i class="fas fa-home"></i> Início</a></li>
+            <li><a href="#" onclick="showSection('betting'); closeMobileMenu(); return false;"><i class="fas fa-coins"></i> Apostas</a></li>
+            <li><a href="#" onclick="showSection('results'); closeMobileMenu(); return false;"><i class="fas fa-trophy"></i> Resultados</a></li>
+            <li><a href="#" onclick="showPromotions(); closeMobileMenu(); return false;"><i class="fas fa-gift"></i> Promo</a></li>
+            <li><a href="#" onclick="showSection('settings'); closeMobileMenu(); return false;"><i class="fas fa-cog"></i> Configurações</a></li>
+            <li><a href="#" onclick="showSection('help'); closeMobileMenu(); return false;"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+
+            <!-- User Info Mobile -->
+            <div class="user-info-mobile">
+                <div class="user-balance">
+                    <i class="fas fa-wallet"></i>
+                    <span id="userBalanceMobile">R$ 0,00</span>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                    <button class="theme-toggle" id="themeToggleMobile" aria-label="Toggle theme" style="width: 60px; height: 30px;">
+                        <div class="theme-toggle__container" style="width: 100%; height: 100%; position: relative;">
+                            <svg class="theme-toggle__sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                <circle cx="12" cy="12" r="5" fill="currentColor"/>
+                            </svg>
+                            <svg class="theme-toggle__moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor"/>
+                            </svg>
+                            <div class="theme-toggle__thumb" style="position: absolute; left: 4px; width: 22px; height: 22px;"></div>
+                        </div>
+                    </button>
+
+                    <button class="logout-btn-mobile" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </div>
         </ul>
 
-        <div class="user-info" style="display: flex; align-items: center; gap: 20px;">
-            <div class="user-balance" style="background: var(--accent-gradient); color: white; padding: 10px 20px; border-radius: var(--radius-md); font-weight: 700; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+        <!-- User Info Desktop -->
+        <div class="user-info">
+            <div class="user-balance">
                 <i class="fas fa-wallet"></i>
                 <span id="userBalance">R$ 0,00</span>
             </div>
 
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" style="width: 64px; height: 32px; border-radius: 50px; background: var(--light-secondary); border: 2px solid var(--border); cursor: pointer; position: relative; padding: 0; transition: var(--transition); display: flex; align-items: center; justify-content: center;">
-                <div class="theme-toggle__container" style="width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: space-between; padding: 0 8px;">
-                    <svg class="theme-toggle__sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 18px; height: 18px; color: var(--text-secondary); transition: var(--transition); z-index: 2;">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <div class="theme-toggle__container">
+                    <svg class="theme-toggle__sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="5" fill="currentColor"/>
-                        <line x1="12" y1="1" x2="12" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <line x1="12" y1="20" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <line x1="1" y1="12" x2="4" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <line x1="20" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                    <svg class="theme-toggle__moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 18px; height: 18px; color: var(--text-secondary); transition: var(--transition); z-index: 2;">
+                    <svg class="theme-toggle__moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor"/>
                     </svg>
-                    <div class="theme-toggle__thumb" style="position: absolute; left: 4px; width: 24px; height: 24px; background: var(--accent-gradient); border-radius: 50%; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);"></div>
+                    <div class="theme-toggle__thumb"></div>
                 </div>
             </button>
 
-            <button class="btn btn-secondary" onclick="logout()" style="padding: 12px 24px; border-radius: var(--radius-md); border: 2px solid var(--border); background: var(--light-secondary); color: var(--text-primary); font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px;">
+            <button class="btn btn-secondary" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Sair
             </button>
         </div>
     </div>
 </nav>
-
 <!-- Seção Home/Inicial -->
 <div id="homeSection" class="container">
     <div class="hero-section">
@@ -3958,7 +4829,74 @@
             }
         }
     });
+    // Sistema de Menu Mobile
+    function initMobileMenu() {
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        const navOverlay = document.getElementById('navOverlay');
+        const themeToggleMobile = document.getElementById('themeToggleMobile');
+        const mainThemeToggle = document.getElementById('themeToggle');
 
+        // Toggle do menu
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            navOverlay.classList.toggle('active');
+            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // Fechar menu ao clicar no overlay
+        navOverlay.addEventListener('click', () => {
+            closeMobileMenu();
+        });
+
+        // Sincronizar tema mobile com desktop
+        if (themeToggleMobile && mainThemeToggle) {
+            themeToggleMobile.addEventListener('click', () => {
+                mainThemeToggle.click();
+            });
+        }
+
+        // Atualizar saldo mobile
+        updateMobileBalance();
+    }
+
+    function closeMobileMenu() {
+        const navLinks = document.getElementById('navLinks');
+        const navOverlay = document.getElementById('navOverlay');
+
+        navLinks.classList.remove('active');
+        navOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function updateMobileBalance() {
+        if (currentUser) {
+            const mobileBalance = document.getElementById('userBalanceMobile');
+            if (mobileBalance) {
+                mobileBalance.textContent = `R$ ${currentUser.balance.toFixed(2)}`;
+            }
+        }
+    }
+
+    // Chamar initMobileMenu no DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... código existente ...
+        initMobileMenu();
+
+        // Atualizar função updateUserDisplay para incluir mobile
+        const originalUpdateUserDisplay = updateUserDisplay;
+        updateUserDisplay = function() {
+            originalUpdateUserDisplay();
+            updateMobileBalance();
+        };
+    });
+
+    // Atualizar função logout para fechar menu mobile
+    const originalLogout = logout;
+    logout = function() {
+        closeMobileMenu();
+        originalLogout();
+    };
 
     // Salvar estatísticas do jogo
     function saveGameStats() {
