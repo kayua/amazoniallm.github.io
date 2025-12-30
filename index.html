@@ -2186,7 +2186,9 @@
         </div>
     </div>
 </div>
-
+<button onclick="debugSystem()" style="position: fixed; bottom: 20px; right: 20px; padding: 12px 24px; background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white; border: none; border-radius: 12px; cursor: pointer; z-index: 9999; font-weight: 700; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); display: flex; align-items: center; gap: 8px; font-size: 14px;">
+    <i class="fas fa-tools"></i> Debug Sistema
+</button>
 <!-- Modal de Conquistas -->
 <div id="achievementsModal" class="modal">
     <div class="modal-content" style="max-width: 700px;">
@@ -2215,41 +2217,48 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 
+
 <script>
     // ==================== CONFIGURAÇÃO DO FIREBASE ====================
     const firebaseConfig = {
+
         apiKey: "AIzaSyCRrz6AIy0nmU2LCXIM3r2_9_O6AJea-yM",
+
         authDomain: "marcosbet-def.firebaseapp.com",
+
         databaseURL: "https://marcosbet-def-default-rtdb.firebaseio.com",
+
         projectId: "marcosbet-def",
+
         storageBucket: "marcosbet-def.firebasestorage.app",
+
         messagingSenderId: "637877497672",
-        appId: "1:637877497672:web:acc3c8e8c853fd53d24d7d"
+
+        appId: "1:637877497672:web:26b274e832667f34d24d7d"
+
     };
+
+
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-
     // ATIVAR PERSISTÊNCIA OFFLINE
     db.enablePersistence({ synchronizeTabs: true })
         .catch((err) => {
             if (err.code === 'failed-precondition') {
-                console.warn('Persistência offline desativada: múltiplas abas abertas');
+                console.warn('⚠️ Persistência offline desativada: múltiplas abas abertas');
             } else if (err.code === 'unimplemented') {
-                console.warn('Persistência offline não suportada neste navegador');
+                console.warn('⚠️ Persistência offline não suportada neste navegador');
             }
         });
-
     // ==================== VARIÁVEIS GLOBAIS ====================
     let currentUser = null;
     let currentUserData = null;
     let unsubscribeDraws = null;
-    let unsubscribeJackpot = null;
-    let unsubscribeOnlinePlayers = null;
     let unsubscribeGlobal = null;
+    let unsubscribeUserBets = null;
     let timerInterval = null;
-
     const animals = [
         { number: 1, name: "Avestruz", icon: "🐦", odds: 18, group: "1º", color: "#10B981" },
         { number: 2, name: "Águia", icon: "🦅", odds: 18, group: "1º", color: "#3B82F6" },
@@ -2277,7 +2286,6 @@
         { number: 24, name: "Veado", icon: "🦌", odds: 18, group: "5º", color: "#EC4899" },
         { number: 25, name: "Vaca", icon: "🐄", odds: 18, group: "5º", color: "#F59E0B" }
     ];
-
     let selectedAnimals = [];
     let currentBetAmount = 10;
     let userBets = [];
@@ -2285,142 +2293,41 @@
     let selectedDepositAmount = 0;
     let selectedPaymentMethod = '';
     let currentTutorialStep = 1;
-    let responsibleLimits = {
-        dailyLimit: 0,
-        timeLimit: 0,
-        selfExclude: false
-    };
-
-    // ==================== FUNÇÃO PARA AGUARDAR FIRESTORE FICAR ONLINE ====================
-    async function waitForFirestoreOnline(timeout = 10000) {
-        const start = Date.now();
-
-        while (Date.now() - start < timeout) {
-            try {
-                await db.collection('system').doc('global').get({ source: 'server' });
-                console.log('✅ Firestore conectado');
-                return true;
-            } catch (error) {
-                if (error.code === 'unavailable' || error.message.includes('offline')) {
-                    console.log('⏳ Aguardando conexão Firestore...');
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                } else {
-                    console.warn('⚠️ Erro ao conectar:', error.message);
-                    return false;
-                }
-            }
-        }
-
-        console.warn('⚠️ Timeout ao conectar ao Firestore');
-        return false;
-    }
-
-    // ==================== CARREGAR DADOS DO USUÁRIO COM RETRY ====================
-    async function loadUserData(uid, maxRetries = 3) {
-        for (let attempt = 1; attempt <= maxRetries; attempt++) {
-            try {
-                console.log(`📥 Tentativa ${attempt} de carregar dados do usuário ${uid}...`);
-
-                const userDoc = await db.collection('users').doc(uid).get();
-
-                if (userDoc.exists) {
-                    currentUserData = { ...userDoc.data(), uid };
-                    console.log('✅ Dados do usuário carregados com sucesso!');
-
-                    // Carregar configurações adicionais
-                    await loadUserSettings();
-                    await loadUserBets();
-
-                    return true;
-                } else {
-                    console.log('⚠️ Usuário não encontrado no banco. Criando novo...');
-                    await createNewUserData(uid);
-                    return true;
-                }
-            } catch (error) {
-                console.warn(`❌ Tentativa ${attempt} falhou:`, error.message);
-
-                if (attempt < maxRetries) {
-                    const delay = 1000 * attempt;
-                    console.log(`Aguardando ${delay}ms antes de tentar novamente...`);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                } else {
-                    showNotification('❌ Não foi possível carregar seus dados. Recarregue a página.', 'error');
-                    return false;
-                }
-            }
-        }
-
-        return false;
-    }
-
+    // ==================== AUTENTICAÇÃO ====================
     auth.onAuthStateChanged(async (user) => {
         console.log('🔄 Estado de autenticação mudou:', user ? user.email : 'Nenhum usuário');
-
         if (user) {
             currentUser = user;
-
-            // Mostrar interface IMEDIATAMENTE
+            // Mostrar interface imediatamente
             showMainApp();
             showNotification('🔑 Carregando seus dados...', 'info');
-
             try {
-                // 1. Aguardar Firestore ficar online (com timeout menor)
-                const online = await waitForFirestoreOnline(5000);
-
-                // 2. Inicializar sistema global (sem bloquear)
-                initializeGlobalDrawSystem().catch(err => {
-                    console.warn('⚠️ Erro ao inicializar sistema global (continuando):', err.message);
-                });
-
-                // 3. Carregar dados do usuário
-                const loaded = await loadUserData(user.uid);
-                if (!loaded) {
-                    console.warn('⚠️ Usando dados padrão para o usuário');
-                    // Criar dados padrão temporários
-                    currentUserData = {
-                        uid: user.uid,
-                        email: user.email,
-                        balance: 50,
-                        fullName: '',
-                        phone: '',
-                        memberSince: new Date().getFullYear().toString(),
-                        totalBets: 0,
-                        totalWins: 0,
-                        level: 1,
-                        xp: 0,
-                        nextLevelXp: 100
-                    };
+                // Carregar dados do usuário
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    currentUserData = { ...userDoc.data(), uid: user.uid };
+                    console.log('✅ Dados do usuário carregados');
+                } else {
+                    console.log('⚠️ Criando novo usuário...');
+                    await createNewUserData(user.uid);
                 }
-
-                // 4. Configurar presença (sem bloquear)
-                updateUserPresence(true).catch(err => {
-                    console.warn('⚠️ Erro ao atualizar presença:', err.message);
-                });
-
-                // 5. Iniciar timer
+                // Inicializar sistema
+                await initializeGlobalDrawSystem();
+                // Configurar presença
+                await updateUserPresence(true);
+                // Iniciar listeners
                 initTimer();
-
-                // 6. Atualizar display
+                initUserBetsListener();
+                initDrawResultsListener();
+                // Atualizar display
                 updateUserDisplay();
-
-                console.log('✅ Aplicativo carregado!');
                 showNotification('✅ Bem-vindo de volta!', 'success');
-
             } catch (error) {
                 console.error('❌ Erro na inicialização:', error);
                 showNotification('⚠️ Alguns dados podem não estar atualizados', 'warning');
-
-                // Garantir que pelo menos dados básicos existam
+                // Dados mínimos para não quebrar
                 if (!currentUserData) {
-                    currentUserData = {
-                        uid: user.uid,
-                        email: user.email,
-                        balance: 50,
-                        totalBets: 0,
-                        totalWins: 0,
-                        level: 1
-                    };
+                    currentUserData = { uid: user.uid, email: user.email, balance: 50, totalBets: 0, totalWins: 0, level: 1 };
                 }
                 updateUserDisplay();
             }
@@ -2428,8 +2335,6 @@
             currentUser = null;
             currentUserData = null;
             cleanupListeners();
-
-            // Mostrar tela de login
             document.getElementById('authScreen').style.display = 'flex';
             document.getElementById('navbar').style.display = 'none';
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
@@ -2451,124 +2356,67 @@
             nextLevelXp: 100,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
-
-        try {
-            await db.collection('users').doc(uid).set(newUserData);
-            currentUserData = newUserData;
-
-            await db.collection('users').doc(uid).collection('settings').doc('preferences').set({
-                notifications: true,
-                promotions: true,
-                soundEffects: false,
-                language: 'pt'
-            });
-
-            showNotification('🎉 Bônus de boas-vindas: R$ 50,00 creditados!', 'success');
-        } catch (error) {
-            console.error('Erro ao criar usuário:', error);
-        }
+        await db.collection('users').doc(uid).set(newUserData);
+        currentUserData = newUserData;
+        await db.collection('users').doc(uid).collection('settings').doc('preferences').set({
+            notifications: true,
+            promotions: true,
+            soundEffects: false,
+            language: 'pt'
+        });
+        showNotification('🎉 Bônus de boas-vindas: R$ 50,00 creditados!', 'success');
     }
-
-    // ==================== CARREGAR APOSTAS DO USUÁRIO ====================
-    async function loadUserBets() {
-        if (!currentUser) return;
-
+    // ==================== INICIALIZAR SISTEMA GLOBAL ====================
+    async function initializeGlobalDrawSystem() {
         try {
-            const betsSnapshot = await db.collection('users')
-                .doc(currentUser.uid)
-                .collection('bets')
-                .where('status', '==', 'pending')
-                .get();
-
-            userBets = betsSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-
-            updateBetsList();
-        } catch (error) {
-            console.error('Erro ao carregar apostas:', error);
-            userBets = [];
-        }
-    }
-
-    // ==================== CARREGAR CONFIGURAÇÕES DO USUÁRIO ====================
-    async function loadUserSettings() {
-        if (!currentUser) return;
-
-        try {
-            const settingsDoc = await db.collection('users')
-                .doc(currentUser.uid)
-                .collection('settings')
-                .doc('preferences')
-                .get();
-
-            if (settingsDoc.exists) {
-                currentUserData.settings = settingsDoc.data();
-
-                // Aplicar preferências
-                if (currentUserData.settings.notifications !== undefined) {
-                    const notifEl = document.getElementById('notifications');
-                    if (notifEl) notifEl.checked = currentUserData.settings.notifications;
+            const globalRef = db.collection('system').doc('global');
+            const globalDoc = await globalRef.get();
+            if (!globalDoc.exists) {
+                console.log('⚠️ Sistema não inicializado. Criando...');
+                const now = new Date();
+                const minutes = now.getMinutes();
+                const nextMinutes = Math.ceil(minutes / 5) * 5;
+                const nextDraw = new Date(now);
+                nextDraw.setMinutes(nextMinutes, 0, 0);
+                if (nextMinutes >= 60) {
+                    nextDraw.setHours(nextDraw.getHours() + 1);
+                    nextDraw.setMinutes(0, 0, 0);
                 }
-                if (currentUserData.settings.promotions !== undefined) {
-                    const promoEl = document.getElementById('promotions');
-                    if (promoEl) promoEl.checked = currentUserData.settings.promotions;
-                }
-                if (currentUserData.settings.soundEffects !== undefined) {
-                    const soundEl = document.getElementById('soundEffects');
-                    if (soundEl) soundEl.checked = currentUserData.settings.soundEffects;
-                }
-                if (currentUserData.settings.language) {
-                    const langEl = document.getElementById('language');
-                    if (langEl) langEl.value = currentUserData.settings.language;
-                }
+                await globalRef.set({
+                    jackpot: 25847.50,
+                    nextDrawTime: firebase.firestore.Timestamp.fromDate(nextDraw),
+                    drawNumber: 202412345,
+                    onlinePlayers: 0,
+                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log('✅ Sistema inicializado');
             }
         } catch (error) {
-            console.error('Erro ao carregar configurações:', error);
+            console.error('❌ Erro ao inicializar sistema:', error);
         }
     }
-
-    // ==================== SISTEMA DE PRESENÇA E JOGADORES ONLINE ====================
+    // ==================== SISTEMA DE PRESENÇA ====================
     async function updateUserPresence(online) {
         if (!currentUser) return;
-
         try {
             const presenceRef = db.collection('presence').doc(currentUser.uid);
-
             if (online) {
                 await presenceRef.set({
                     online: true,
                     lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
                     userId: currentUser.uid
                 });
-
-                // Incrementar contador global
                 await db.collection('system').doc('global').update({
                     onlinePlayers: firebase.firestore.FieldValue.increment(1)
                 });
-
-                // Configurar listener para desconexão
                 window.addEventListener('beforeunload', () => {
-                    updateUserPresence(false);
+                    navigator.sendBeacon('/offline', JSON.stringify({ uid: currentUser.uid }));
                 });
-
-                // Atualizar presença a cada 30 segundos
-                setInterval(async () => {
-                    if (currentUser) {
-                        await presenceRef.update({
-                            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    }
-                }, 30000);
-
             } else {
                 await presenceRef.update({
                     online: false,
                     lastSeen: firebase.firestore.FieldValue.serverTimestamp()
                 });
-
-                // Decrementar contador global
                 await db.collection('system').doc('global').update({
                     onlinePlayers: firebase.firestore.FieldValue.increment(-1)
                 });
@@ -2577,95 +2425,17 @@
             console.error('Erro ao atualizar presença:', error);
         }
     }
-
-    // ==================== INICIALIZAR SISTEMA GLOBAL ====================
-    async function initializeGlobalDrawSystem() {
-        try {
-            console.log('🚀 Iniciando sistema global...');
-
-            const globalRef = db.collection('system').doc('global');
-
-            // Tentar buscar com retry
-            let globalDoc = null;
-            for (let i = 0; i < 3; i++) {
-                try {
-                    globalDoc = await globalRef.get();
-                    break;
-                } catch (error) {
-                    if (i === 2) throw error;
-                    console.log(`Tentativa ${i + 1} falhou, tentando novamente...`);
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                }
-            }
-
-            if (!globalDoc.exists) {
-                console.log('⚠️ Sistema não inicializado. Criando documento global...');
-
-                const now = new Date();
-                const minutes = now.getMinutes();
-                const nextMinutes = Math.ceil(minutes / 5) * 5;
-
-                const nextDraw = new Date(now);
-                nextDraw.setMinutes(nextMinutes, 0, 0);
-
-                if (nextMinutes >= 60) {
-                    nextDraw.setHours(nextDraw.getHours() + 1);
-                    nextDraw.setMinutes(0, 0, 0);
-                }
-
-                await globalRef.set({
-                    jackpot: 25847.50,
-                    nextDrawTime: firebase.firestore.Timestamp.fromDate(nextDraw),
-                    drawNumber: 202412345,
-                    onlinePlayers: 0,
-                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                console.log('✅ Sistema inicializado com sucesso!');
-                console.log('📅 Próximo sorteio:', nextDraw.toLocaleString('pt-BR'));
-            } else {
-                console.log('✅ Sistema já inicializado');
-                const data = globalDoc.data();
-                console.log('📊 Dados do sistema:');
-                console.log('   - Jackpot: R$', data.jackpot);
-                console.log('   - Draw Number:', data.drawNumber);
-                console.log('   - Próximo sorteio:', data.nextDrawTime?.toDate().toLocaleString('pt-BR'));
-                console.log('   - Jogadores online:', data.onlinePlayers);
-            }
-        } catch (error) {
-            console.error('❌ ERRO ao inicializar sistema global:', error);
-            showNotification('⚠️ Erro ao conectar ao servidor: ' + error.message, 'warning');
-        }
-    }
-
-    // ==================== SISTEMA DE TIMER E ATUALIZAÇÕES ====================
+    // ==================== TIMER E LISTENERS ====================
     function initTimer() {
-        // Limpar timer anterior se existir
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-
-        // Limpar listener anterior se existir
-        if (unsubscribeGlobal) {
-            unsubscribeGlobal();
-            unsubscribeGlobal = null;
-        }
-
+        // Limpar anteriores
+        if (timerInterval) clearInterval(timerInterval);
+        if (unsubscribeGlobal) unsubscribeGlobal();
         console.log('🕐 Inicializando timer...');
-
-        // Listener para o documento global (uma única vez)
+        // Listener para dados globais
         unsubscribeGlobal = db.collection('system').doc('global')
             .onSnapshot((doc) => {
-                if (!doc.exists) {
-                    console.warn('⚠️ Documento global não existe');
-                    const timerEl = document.getElementById('drawTimer');
-                    if (timerEl) timerEl.textContent = '--:--';
-                    return;
-                }
-
+                if (!doc.exists) return;
                 const data = doc.data();
-
                 // Atualizar jackpot
                 if (data.jackpot !== undefined) {
                     const jackpotEl = document.getElementById('jackpotAmount');
@@ -2673,15 +2443,13 @@
                         jackpotEl.textContent = `R$ ${data.jackpot.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
                     }
                 }
-
                 // Atualizar jogadores online
                 if (data.onlinePlayers !== undefined) {
-                    const onlineElements = document.querySelectorAll('.header-card:nth-child(3) .stat-value, .header-card:nth-child(3) div[style*="font-size: 32px"]');
+                    const onlineElements = document.querySelectorAll('.header-card:nth-child(3) div[style*="font-size: 32px"]');
                     onlineElements.forEach(el => {
                         el.textContent = data.onlinePlayers.toLocaleString();
                     });
                 }
-
                 // Atualizar número do sorteio
                 if (data.drawNumber) {
                     const drawNumElements = document.querySelectorAll('.header-card:nth-child(2) > div:last-child');
@@ -2689,70 +2457,103 @@
                         el.textContent = `Sorteio #${data.drawNumber}`;
                     });
                 }
-
-                console.log('📊 Dados atualizados:', {
-                    jackpot: data.jackpot,
-                    drawNumber: data.drawNumber,
-                    onlinePlayers: data.onlinePlayers,
-                    nextDrawTime: data.nextDrawTime?.toDate().toLocaleString('pt-BR')
-                });
-
             }, (error) => {
-                console.error('❌ Erro ao escutar global:', error);
+                console.error('❌ Erro no listener global:', error);
             });
-
-        // Atualizar timer a cada segundo (em intervalo separado)
+        // Timer local para countdown
         timerInterval = setInterval(async () => {
             try {
                 const globalDoc = await db.collection('system').doc('global').get();
-
-                if (!globalDoc.exists) {
-                    const timerEl = document.getElementById('drawTimer');
-                    if (timerEl) timerEl.textContent = '--:--';
-                    return;
-                }
-
+                if (!globalDoc.exists) return;
                 const data = globalDoc.data();
-
-                if (!data.nextDrawTime) {
-                    const timerEl = document.getElementById('drawTimer');
-                    if (timerEl) timerEl.textContent = '--:--';
-                    return;
-                }
-
+                if (!data.nextDrawTime) return;
                 const nextDrawTime = data.nextDrawTime.toDate();
                 const now = new Date();
                 const diff = nextDrawTime - now;
-
+                const timerEl = document.getElementById('drawTimer');
+                if (!timerEl) return;
                 if (diff <= 0) {
-                    const timerEl = document.getElementById('drawTimer');
-                    if (timerEl) timerEl.textContent = '00:00';
+                    timerEl.textContent = '00:00';
                     return;
                 }
-
                 const minutesLeft = Math.floor(diff / (1000 * 60));
                 const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
-
-                const timerEl = document.getElementById('drawTimer');
-                if (timerEl) {
-                    timerEl.textContent = `${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
-                }
-
+                timerEl.textContent = `${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
             } catch (error) {
-                // Silenciar erros de rede no timer
-                if (!error.message.includes('offline')) {
-                    console.error('❌ Erro ao atualizar timer:', error);
-                }
+                // Silenciar erros de rede
             }
         }, 1000);
-
-        console.log('✅ Timer inicializado');
     }
-
-    // ==================== LIMPAR LISTENERS AO SAIR ====================
+    // ==================== LISTENER DE APOSTAS DO USUÁRIO ====================
+    function initUserBetsListener() {
+        if (!currentUser) return;
+        if (unsubscribeUserBets) unsubscribeUserBets();
+        unsubscribeUserBets = db.collection('users')
+            .doc(currentUser.uid)
+            .collection('bets')
+            .where('status', '==', 'pending')
+            .onSnapshot((snapshot) => {
+                userBets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                updateBetsList();
+            }, (error) => {
+                console.error('Erro ao escutar apostas:', error);
+            });
+    }
+    // ==================== LISTENER DE RESULTADOS ====================
+    function initDrawResultsListener() {
+        if (!currentUser) return;
+        if (unsubscribeDraws) unsubscribeDraws();
+        unsubscribeDraws = db.collection('draws')
+            .orderBy('date', 'desc')
+            .limit(1)
+            .onSnapshot((snapshot) => {
+                if (snapshot.empty) return;
+                const latestDraw = snapshot.docs[0].data();
+                // Verificar se temos apostas neste sorteio
+                checkWinningBets(latestDraw);
+            }, (error) => {
+                console.error('Erro ao escutar resultados:', error);
+            });
+    }
+    // ==================== VERIFICAR APOSTAS GANHADORAS ====================
+    async function checkWinningBets(drawResult) {
+        if (!currentUser) return;
+        try {
+            const betsSnapshot = await db.collection('users')
+                .doc(currentUser.uid)
+                .collection('bets')
+                .where('drawNumber', '==', drawResult.drawNumber)
+                .where('status', 'in', ['won', 'lost'])
+                .get();
+            betsSnapshot.forEach(doc => {
+                const bet = doc.data();
+                if (bet.status === 'won' && !sessionStorage.getItem(`notified_${doc.id}`)) {
+                    // Mostrar notificação de vitória
+                    showWinNotification(bet, drawResult.animal);
+                    sessionStorage.setItem(`notified_${doc.id}`, 'true');
+                    // Atualizar saldo local
+                    if (bet.winAmount) {
+                        currentUserData.balance += bet.winAmount;
+                        updateUserDisplay();
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Erro ao verificar apostas ganhadoras:', error);
+        }
+    }
+    function showWinNotification(bet, animal) {
+        const modal = document.getElementById('resultModal');
+        document.getElementById('resultAnimalIcon').textContent = animal.icon;
+        document.getElementById('resultMessage').textContent = 'Você Ganhou!';
+        document.getElementById('resultAmount').textContent = `R$ ${bet.winAmount.toFixed(2)}`;
+        document.getElementById('resultDescription').textContent = `Parabéns! O ${animal.name} foi sorteado!`;
+        modal.classList.add('active');
+        createConfetti();
+    }
+    // ==================== LIMPAR LISTENERS ====================
     function cleanupListeners() {
         console.log('🧹 Limpando listeners...');
-
         if (unsubscribeDraws) {
             unsubscribeDraws();
             unsubscribeDraws = null;
@@ -2761,12 +2562,15 @@
             unsubscribeGlobal();
             unsubscribeGlobal = null;
         }
+        if (unsubscribeUserBets) {
+            unsubscribeUserBets();
+            unsubscribeUserBets = null;
+        }
         if (timerInterval) {
             clearInterval(timerInterval);
             timerInterval = null;
         }
     }
-
     // ==================== LOGOUT ====================
     async function logout() {
         try {
@@ -2780,34 +2584,26 @@
             showNotification('❌ Erro ao sair', 'error');
         }
     }
-
-    // Tornar logout global
     window.logout = logout;
-
-    // ==================== AUTENTICAÇÃO ====================
+    // ==================== AUTENTICAÇÃO - TABS ====================
     function initAuthTabs() {
         const tabs = document.querySelectorAll('.auth-tab');
         const forms = document.querySelectorAll('.auth-form');
-
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 const tabName = tab.getAttribute('data-tab');
-
                 tabs.forEach(t => {
                     t.classList.remove('active');
                     t.style.background = 'none';
                     t.style.color = 'var(--text-secondary)';
                 });
-
                 forms.forEach(f => {
                     f.style.display = 'none';
                     f.classList.remove('active');
                 });
-
                 tab.classList.add('active');
                 tab.style.background = 'var(--accent-gradient)';
                 tab.style.color = 'white';
-
                 const form = document.getElementById(`${tabName}Form`);
                 if (form) {
                     form.style.display = 'block';
@@ -2815,82 +2611,65 @@
                 }
             });
         });
-
         // Login
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
-            const username = document.getElementById('loginUsername').value;
+            const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-
             try {
+                // Se for o usuário de teste
                 if (username === 'kayua' && password === '12345') {
-                    await auth.signInWithEmailAndPassword('kayua@teste.com', '12345');
+                    // Tentar fazer login com o email de teste
+                    try {
+                        await auth.signInWithEmailAndPassword('kayua@teste.com', '123456');
+                    } catch (loginError) {
+                        // Se não existir, criar o usuário
+                        if (loginError.code === 'auth/user-not-found') {
+                            console.log('Criando usuário de teste...');
+                            await auth.createUserWithEmailAndPassword('kayua@teste.com', '123456');
+                            showNotification('✅ Usuário de teste criado e logado!', 'success');
+                        } else {
+                            throw loginError;
+                        }
+                    }
                 } else {
+                    // Login normal com email
                     await auth.signInWithEmailAndPassword(username, password);
                 }
                 showNotification('🎉 Login realizado com sucesso!', 'success');
                 createConfetti();
             } catch (error) {
                 console.error('Erro no login:', error);
-                showNotification('❌ Usuário ou senha incorretos!', 'error');
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    showNotification('❌ Usuário ou senha incorretos!', 'error');
+                } else {
+                    showNotification('❌ Erro ao fazer login: ' + error.message, 'error');
+                }
             }
         });
-
         // Cadastro
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
             const username = document.getElementById('registerUsername').value.trim();
             const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
-
             if (!username || !email || !password || !confirmPassword) {
-                showNotification('❌ Por favor, preencha todos os campos!', 'error');
+                showNotification('❌ Preencha todos os campos!', 'error');
                 return;
             }
-
             if (password.length < 5) {
                 showNotification('❌ A senha deve ter pelo menos 5 caracteres!', 'error');
                 return;
             }
-
             if (password !== confirmPassword) {
                 showNotification('❌ As senhas não coincidem!', 'error');
                 return;
             }
-
             try {
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-
-                await db.collection('users').doc(user.uid).set({
-                    uid: user.uid,
-                    email: email,
-                    username: username,
-                    balance: 50,
-                    fullName: '',
-                    phone: '',
-                    memberSince: new Date().getFullYear().toString(),
-                    totalBets: 0,
-                    totalWins: 0,
-                    level: 1,
-                    xp: 0,
-                    nextLevelXp: 100,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                await db.collection('users').doc(user.uid).collection('settings').doc('preferences').set({
-                    notifications: true,
-                    promotions: true,
-                    soundEffects: false,
-                    language: 'pt'
-                });
-
-                showNotification('🎉 Conta criada com sucesso! R$ 50 de bônus adicionados.', 'success');
+                showNotification('🎉 Conta criada com sucesso!', 'success');
                 createConfetti();
-
                 setTimeout(() => {
                     showTutorial();
                 }, 1500);
@@ -2901,37 +2680,32 @@
                 } else if (error.code === 'auth/invalid-email') {
                     showNotification('❌ Email inválido!', 'error');
                 } else {
-                    showNotification('❌ Erro ao criar conta!', 'error');
+                    showNotification('❌ Erro ao criar conta: ' + error.message, 'error');
                 }
             }
         });
     }
-
     // ==================== INTERFACE DE ANIMAIS ====================
     function initAnimalsGrid() {
         const grid = document.getElementById('animalsGrid');
         grid.innerHTML = '';
-
         animals.forEach(animal => {
             const card = document.createElement('div');
             card.className = 'animal-card';
             card.dataset.number = animal.number;
             card.innerHTML = `
-            <div style="position: absolute; top: 15px; left: 15px; background: ${animal.color}; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">${animal.number}</div>
-            <div style="font-size: 48px; margin-bottom: 15px; color: ${animal.color};">${animal.icon}</div>
-            <div style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 5px;">${animal.name}</div>
-            <div style="color: var(--text-tertiary); font-size: 12px; margin-bottom: 8px;">Grupo ${animal.group}</div>
-            <div style="color: var(--accent); font-weight: 600; font-size: 14px;">${animal.odds}x</div>
-        `;
-
+      <div style="position: absolute; top: 15px; left: 15px; background: ${animal.color}; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">${animal.number}</div>
+      <div style="font-size: 48px; margin-bottom: 15px; color: ${animal.color};">${animal.icon}</div>
+      <div style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 5px;">${animal.name}</div>
+      <div style="color: var(--text-tertiary); font-size: 12px; margin-bottom: 8px;">Grupo ${animal.group}</div>
+      <div style="color: var(--accent); font-weight: 600; font-size: 14px;">${animal.odds}x</div>
+    `;
             card.addEventListener('click', () => toggleAnimalSelection(animal));
             grid.appendChild(card);
         });
     }
-
     function toggleAnimalSelection(animal) {
         const index = selectedAnimals.findIndex(a => a.number === animal.number);
-
         if (index === -1) {
             selectedAnimals.push(animal);
             document.querySelector(`.animal-card[data-number="${animal.number}"]`).classList.add('selected');
@@ -2939,10 +2713,8 @@
             selectedAnimals.splice(index, 1);
             document.querySelector(`.animal-card[data-number="${animal.number}"]`).classList.remove('selected');
         }
-
         updateStats();
     }
-
     // ==================== CONTROLES DE APOSTA ====================
     function selectBetType(type) {
         betType = type;
@@ -2950,7 +2722,7 @@
         event.target.classList.add('active');
         showNotification(`🎯 Modo ${getBetTypeName(type)} ativado`, 'info');
     }
-
+    window.selectBetType = selectBetType;
     function getBetTypeName(type) {
         const names = {
             'simple': 'Aposta Simples',
@@ -2961,204 +2733,241 @@
         };
         return names[type] || type;
     }
-
     function setQuickBet(amount) {
         currentBetAmount = amount;
         document.getElementById('betAmount').value = amount;
         document.getElementById('currentBetAmount').textContent = amount;
         updateStats();
     }
-
+    window.setQuickBet = setQuickBet;
     function adjustBet(amount) {
         currentBetAmount = Math.max(1, Math.min(1000, currentBetAmount + amount));
         document.getElementById('betAmount').value = currentBetAmount;
         document.getElementById('currentBetAmount').textContent = currentBetAmount;
         updateStats();
     }
-
-    document.getElementById('betAmount').addEventListener('input', function(e) {
-        let value = parseInt(e.target.value) || 1;
-        value = Math.max(1, Math.min(1000, value));
-        currentBetAmount = value;
-        e.target.value = value;
-        document.getElementById('currentBetAmount').textContent = value;
-        updateStats();
+    window.adjustBet = adjustBet;
+    document.addEventListener('DOMContentLoaded', () => {
+        const betAmountInput = document.getElementById('betAmount');
+        if (betAmountInput) {
+            betAmountInput.addEventListener('input', function(e) {
+                let value = parseInt(e.target.value) || 1;
+                value = Math.max(1, Math.min(1000, value));
+                currentBetAmount = value;
+                e.target.value = value;
+                document.getElementById('currentBetAmount').textContent = value;
+                updateStats();
+            });
+        }
     });
-
     // ==================== ESTATÍSTICAS ====================
     function updateStats() {
         const totalAnimals = selectedAnimals.length;
         const totalBet = totalAnimals * currentBetAmount;
         const potentialWin = totalBet * 18;
         const winChance = totalAnimals > 0 ? ((totalAnimals / 25) * 100).toFixed(1) : 0;
-
         document.getElementById('selectedAnimalsCount').textContent = totalAnimals;
         document.getElementById('totalBetAmount').textContent = `R$ ${totalBet.toFixed(2)}`;
         document.getElementById('potentialWin').textContent = `R$ ${potentialWin.toFixed(2)}`;
         document.getElementById('winChance').textContent = `${winChance}%`;
     }
-
-    // ==================== SISTEMA DE APOSTAS ====================
+    // ==================== SISTEMA DE APOSTAS (CORRIGIDO) ====================
     async function placeBet() {
         if (!currentUser || !currentUserData) {
             showNotification('❌ Faça login para apostar!', 'error');
             return;
         }
-
         if (selectedAnimals.length === 0) {
             showNotification('⚠️ Selecione pelo menos um animal!', 'warning');
             return;
         }
-
         const totalBet = selectedAnimals.length * currentBetAmount;
-
         if (totalBet > currentUserData.balance) {
             showNotification('❌ Saldo insuficiente!', 'error');
             showSection('settings');
             showSettingsTab('account');
             return;
         }
-
-        // Mostrar modal de confirmação
         showConfirmBetModal();
     }
-
+    window.placeBet = placeBet;
     function showConfirmBetModal() {
         const modal = document.getElementById('confirmBetModal');
         const animalsDiv = document.getElementById('confirmBetAnimals');
-
-        animalsDiv.innerHTML = selectedAnimals.map(animal =>
-            `<div style="background: ${animal.color}; color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-            ${animal.icon} ${animal.name}
-        </div>`
-        ).join('');
-
+        animalsDiv.innerHTML = selectedAnimals.map(animal => `
+    <div style="background: ${animal.color}; color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+      ${animal.icon} ${animal.name}
+    </div>
+  `).join('');
         const totalBet = selectedAnimals.length * currentBetAmount;
         const potentialWin = totalBet * 18;
-
         document.getElementById('confirmBetAmountPerAnimal').textContent = `R$ ${currentBetAmount.toFixed(2)}`;
         document.getElementById('confirmBetTotal').textContent = `R$ ${totalBet.toFixed(2)}`;
         document.getElementById('confirmBetPotentialWin').textContent = `R$ ${potentialWin.toFixed(2)}`;
-
         modal.classList.add('active');
     }
+
+
 
     async function confirmAndPlaceBet() {
         closeModal('confirmBetModal');
 
+        // Valor de fallback: último drawNumber conhecido pelo listener em tempo real
+        let currentDrawNumber = null;
+
+        // Primeiro: tentar pegar do Firestore com até 3 tentativas
+        let attempts = 0;
+        while (attempts < 3 && currentDrawNumber === null) {
+            try {
+                attempts++;
+                const globalDoc = await db.collection('system').doc('global').get();
+                if (globalDoc.exists) {
+                    currentDrawNumber = globalDoc.data().drawNumber;
+                }
+            } catch (error) {
+                console.warn(`Tentativa ${attempts} de ler drawNumber falhou:`, error.message);
+                if (attempts < 3) {
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // espera 1s antes de tentar de novo
+                }
+            }
+        }
+
+        // Se ainda não conseguiu (offline total), usar o último valor que o listener salvou na UI
+        if (currentDrawNumber === null) {
+            const drawNumEl = document.querySelector('.header-card:nth-child(2) > div:last-child');
+            if (drawNumEl && drawNumEl.textContent.includes('#')) {
+                const text = drawNumEl.textContent.trim();
+                currentDrawNumber = parseInt(text.replace('Sorteio #', ''));
+                showNotification('📶 Você está offline. Aposta será enviada assim que voltar a conexão.', 'warning');
+            } else {
+                showNotification('❌ Sem conexão e sem dados em cache. Tente novamente em breve.', 'error');
+                return;
+            }
+        }
+
+        const totalBet = selectedAnimals.length * currentBetAmount;
+
         try {
-            const totalBet = selectedAnimals.length * currentBetAmount;
+            const batch = db.batch();
 
-            // Criar aposta no Firestore
-            const betData = {
-                userId: currentUser.uid,
-                animals: selectedAnimals.map(a => a.number),
-                betAmount: currentBetAmount,
-                totalBet: totalBet,
-                betType: betType,
-                status: 'pending',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                drawNumber: null
-            };
+            for (const animal of selectedAnimals) {
+                const userBetRef = db.collection('users').doc(currentUser.uid).collection('bets').doc();
+                batch.set(userBetRef, {
+                    userId: currentUser.uid,
+                    animal: {
+                        number: animal.number,
+                        name: animal.name,
+                        icon: animal.icon,
+                        color: animal.color
+                    },
+                    amount: currentBetAmount,
+                    betType: betType,
+                    status: 'pending',
+                    drawNumber: currentDrawNumber,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
 
-            const betRef = await db.collection('users')
-                .doc(currentUser.uid)
-                .collection('bets')
-                .add(betData);
+                const pendingBetRef = db.collection('pending_bets').doc();
+                batch.set(pendingBetRef, {
+                    userId: currentUser.uid,
+                    betId: userBetRef.id,
+                    animal: {
+                        number: animal.number,
+                        name: animal.name,
+                        icon: animal.icon
+                    },
+                    amount: currentBetAmount,
+                    drawNumber: currentDrawNumber,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
 
-            // Atualizar saldo
-            await db.collection('users').doc(currentUser.uid).update({
+            const userRef = db.collection('users').doc(currentUser.uid);
+            batch.update(userRef, {
                 balance: firebase.firestore.FieldValue.increment(-totalBet),
-                totalBets: firebase.firestore.FieldValue.increment(1)
+                totalBets: firebase.firestore.FieldValue.increment(selectedAnimals.length)
             });
 
-            // Atualizar jackpot global
-            await db.collection('system').doc('global').update({
+            const globalRef = db.collection('system').doc('global');
+            batch.update(globalRef, {
                 jackpot: firebase.firestore.FieldValue.increment(totalBet * 0.1)
             });
 
+            // COMMIT DO BATCH (funciona offline graças à persistência!)
+            await batch.commit();
+
+            // Atualização local imediata (mesmo offline)
             currentUserData.balance -= totalBet;
-            currentUserData.totalBets += 1;
-
-            userBets.push({
-                id: betRef.id,
-                ...betData
-            });
-
+            currentUserData.totalBets += selectedAnimals.length;
             updateUserDisplay();
-            updateBetsList();
             clearBets();
 
             showNotification('✅ Aposta realizada com sucesso!', 'success');
             createConfetti();
 
+            // Se estava offline, o Firestore vai sincronizar automaticamente quando voltar
+            if (navigator.onLine === false) {
+                showNotification('📶 Aposta salva localmente. Será sincronizada quando voltar online.', 'info');
+            }
+
         } catch (error) {
-            console.error('Erro ao realizar aposta:', error);
-            showNotification('❌ Erro ao realizar aposta: ' + error.message, 'error');
+            console.error('Erro ao salvar aposta:', error);
+            showNotification('⚠️ Erro ao salvar aposta. Tente novamente.', 'error');
         }
     }
 
+    window.confirmAndPlaceBet = confirmAndPlaceBet;
     function clearBets() {
         selectedAnimals = [];
         document.querySelectorAll('.animal-card').forEach(card => card.classList.remove('selected'));
         updateStats();
     }
-
+    window.clearBets = clearBets;
     function updateBetsList() {
         const betsList = document.getElementById('betsList');
-
         if (userBets.length === 0) {
             betsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 40px;">Nenhuma aposta ativa no momento.</p>';
             return;
         }
-
         betsList.innerHTML = userBets.map(bet => {
-            const animalsHtml = bet.animals.map(num => {
-                const animal = animals.find(a => a.number === num);
-                return `<span style="background: ${animal.color}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">${animal.icon} ${animal.name}</span>`;
-            }).join(' ');
-
+            const animalData = bet.animal || {};
             return `
-            <div class="winner-item">
-                <div style="flex: 1;">
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">${animalsHtml}</div>
-                    <div style="color: var(--text-secondary); font-size: 14px;">
-                        Valor: <strong>R$ ${bet.totalBet.toFixed(2)}</strong> •
-                        Ganho potencial: <strong style="color: var(--accent);">R$ ${(bet.totalBet * 18).toFixed(2)}</strong>
-                    </div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
-                        <i class="fas fa-clock"></i> Pendente
-                    </div>
-                </div>
-            </div>
-        `;
+      <div class="winner-item">
+        <div style="flex: 1;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
+            <span style="background: ${animalData.color || '#10B981'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+              ${animalData.icon || '🎲'} ${animalData.name || 'Animal'}
+            </span>
+          </div>
+          <div style="color: var(--text-secondary); font-size: 14px;">
+            Valor: <strong>R$ ${(bet.amount || 0).toFixed(2)}</strong> • Ganho potencial: <strong style="color: var(--accent);">R$ ${((bet.amount || 0) * 18).toFixed(2)}</strong>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+            <i class="fas fa-clock"></i> Pendente
+          </div>
+        </div>
+      </div>
+    `;
         }).join('');
     }
-
     // ==================== NAVEGAÇÃO ====================
     function showSection(sectionName) {
         document.querySelectorAll('.container').forEach(container => {
             container.classList.remove('active');
         });
-
         const section = document.getElementById(`${sectionName}Section`);
         if (section) {
             section.classList.add('active');
         }
-
-        // Atualizar links ativos
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.classList.remove('active');
         });
-
         const activeLink = document.querySelector(`.nav-links a[onclick*="${sectionName}"]`);
         if (activeLink) {
             activeLink.classList.add('active');
         }
-
-        // Carregar dados específicos da seção
         if (sectionName === 'results') {
             loadRecentDraws();
             loadTopWinners();
@@ -3166,30 +2975,22 @@
             loadSettingsData();
         }
     }
-
     window.showSection = showSection;
-
     // ==================== CONFIGURAÇÕES ====================
     function showSettingsTab(tabName) {
         document.querySelectorAll('.settings-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.settings-content').forEach(content => content.classList.remove('active'));
-
         const tab = document.querySelector(`.settings-tab[onclick*="${tabName}"]`);
         const content = document.getElementById(`${tabName}Tab`);
-
         if (tab) tab.classList.add('active');
         if (content) content.classList.add('active');
-
         if (tabName === 'history') {
             loadBetHistory();
         }
     }
-
     window.showSettingsTab = showSettingsTab;
-
     function loadSettingsData() {
         if (!currentUserData) return;
-
         document.getElementById('profileUsername').textContent = currentUser.email.split('@')[0];
         document.getElementById('profileUsername2').textContent = currentUser.email.split('@')[0];
         document.getElementById('profileEmail').textContent = currentUser.email;
@@ -3197,76 +2998,59 @@
         document.getElementById('totalBets').textContent = currentUserData.totalBets || 0;
         document.getElementById('totalWins').textContent = currentUserData.totalWins || 0;
         document.getElementById('accountBalance').textContent = `R$ ${(currentUserData.balance || 0).toFixed(2)}`;
-
-        // Level progress
         const progress = ((currentUserData.xp || 0) / (currentUserData.nextLevelXp || 100)) * 100;
         document.getElementById('levelProgress').textContent = `${Math.floor(progress)}%`;
         document.getElementById('levelProgressBar').style.width = `${progress}%`;
         document.getElementById('userLevel').textContent = getUserLevel(currentUserData.level || 1);
     }
-
     function getUserLevel(level) {
         const levels = ['Iniciante', 'Novato', 'Apostador', 'Experiente', 'Profissional', 'Mestre', 'Lenda'];
         return levels[Math.min(level - 1, levels.length - 1)] || 'Iniciante';
     }
-
     async function updateProfile() {
         if (!currentUser) return;
-
         const name = document.getElementById('profileName').value;
         const phone = document.getElementById('profilePhone').value;
-
         try {
             await db.collection('users').doc(currentUser.uid).update({
                 fullName: name,
                 phone: phone
             });
-
             currentUserData.fullName = name;
             currentUserData.phone = phone;
-
             showNotification('✅ Perfil atualizado com sucesso!', 'success');
         } catch (error) {
             console.error('Erro ao atualizar perfil:', error);
             showNotification('❌ Erro ao atualizar perfil', 'error');
         }
     }
-
     window.updateProfile = updateProfile;
-
     async function changePassword() {
         const currentPassword = document.getElementById('currentPassword').value;
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmNewPassword').value;
-
         if (!currentPassword || !newPassword || !confirmPassword) {
             showNotification('⚠️ Preencha todos os campos!', 'warning');
             return;
         }
-
         if (newPassword !== confirmPassword) {
             showNotification('❌ As senhas não coincidem!', 'error');
             return;
         }
-
         if (newPassword.length < 5) {
             showNotification('❌ A senha deve ter pelo menos 5 caracteres!', 'error');
             return;
         }
-
         try {
             const credential = firebase.auth.EmailAuthProvider.credential(
                 currentUser.email,
                 currentPassword
             );
-
             await currentUser.reauthenticateWithCredential(credential);
             await currentUser.updatePassword(newPassword);
-
             document.getElementById('currentPassword').value = '';
             document.getElementById('newPassword').value = '';
             document.getElementById('confirmNewPassword').value = '';
-
             showNotification('✅ Senha alterada com sucesso!', 'success');
         } catch (error) {
             console.error('Erro ao alterar senha:', error);
@@ -3277,25 +3061,17 @@
             }
         }
     }
-
     window.changePassword = changePassword;
-
     async function deleteAccount() {
         if (!confirm('⚠️ ATENÇÃO! Esta ação é irreversível. Tem certeza que deseja excluir sua conta permanentemente?')) {
             return;
         }
-
         if (!confirm('Confirme novamente: Deseja realmente excluir sua conta?')) {
             return;
         }
-
         try {
-            // Deletar dados do usuário
             await db.collection('users').doc(currentUser.uid).delete();
-
-            // Deletar conta
             await currentUser.delete();
-
             showNotification('✅ Conta excluída com sucesso', 'success');
             setTimeout(() => location.reload(), 2000);
         } catch (error) {
@@ -3303,44 +3079,30 @@
             showNotification('❌ Erro ao excluir conta. Faça login novamente e tente outra vez.', 'error');
         }
     }
-
     window.deleteAccount = deleteAccount;
-
     async function savePreferences() {
         if (!currentUser) return;
-
         const notifications = document.getElementById('notifications').checked;
         const promotions = document.getElementById('promotions').checked;
         const soundEffects = document.getElementById('soundEffects').checked;
         const language = document.getElementById('language').value;
-
         try {
             await db.collection('users')
                 .doc(currentUser.uid)
                 .collection('settings')
                 .doc('preferences')
-                .set({
-                    notifications,
-                    promotions,
-                    soundEffects,
-                    language
-                }, { merge: true });
-
+                .set({ notifications, promotions, soundEffects, language }, { merge: true });
             showNotification('✅ Preferências salvas com sucesso!', 'success');
         } catch (error) {
             console.error('Erro ao salvar preferências:', error);
             showNotification('❌ Erro ao salvar preferências', 'error');
         }
     }
-
     window.savePreferences = savePreferences;
-
     async function loadBetHistory() {
         if (!currentUser) return;
-
         const historyDiv = document.getElementById('betHistory');
         historyDiv.innerHTML = '<div style="text-align: center; padding: 20px;"><div class="spinner"></div></div>';
-
         try {
             const betsSnapshot = await db.collection('users')
                 .doc(currentUser.uid)
@@ -3348,82 +3110,65 @@
                 .orderBy('createdAt', 'desc')
                 .limit(20)
                 .get();
-
             if (betsSnapshot.empty) {
                 historyDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 40px;">Nenhuma aposta no histórico.</p>';
                 return;
             }
-
             historyDiv.innerHTML = betsSnapshot.docs.map(doc => {
                 const bet = doc.data();
                 const statusIcon = bet.status === 'won' ? '🏆' : bet.status === 'lost' ? '❌' : '⏳';
                 const statusColor = bet.status === 'won' ? 'var(--accent)' : bet.status === 'lost' ? 'var(--danger)' : 'var(--warning)';
                 const statusText = bet.status === 'won' ? 'Ganhou' : bet.status === 'lost' ? 'Perdeu' : 'Pendente';
-
-                const animalsHtml = bet.animals.map(num => {
-                    const animal = animals.find(a => a.number === num);
-                    return `<span style="background: ${animal.color}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px;">${animal.icon} ${animal.name}</span>`;
-                }).join(' ');
-
+                const animalData = bet.animal || {};
                 const date = bet.createdAt ? bet.createdAt.toDate().toLocaleString('pt-BR') : 'Data desconhecida';
-
                 return `
-                <div style="padding: 20px; border-bottom: 1px solid var(--border);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">${animalsHtml}</div>
-                        <div style="background: rgba(${statusColor}, 0.1); color: ${statusColor}; padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
-                            ${statusIcon} ${statusText}
-                        </div>
-                    </div>
-                    <div style="color: var(--text-secondary); font-size: 13px;">
-                        Aposta: <strong>R$ ${bet.totalBet.toFixed(2)}</strong> •
-                        ${bet.status === 'won' ? `Ganho: <strong style="color: var(--accent);">R$ ${(bet.totalBet * 18).toFixed(2)}</strong> • ` : ''}
-                        ${date}
-                    </div>
-                </div>
-            `;
+        <div style="padding: 20px; border-bottom: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <span style="background: ${animalData.color || '#10B981'}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px;">
+                ${animalData.icon || '🎲'} ${animalData.name || 'Animal'}
+              </span>
+            </div>
+            <div style="background: rgba(${statusColor}, 0.1); color: ${statusColor}; padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+              ${statusIcon} ${statusText}
+            </div>
+          </div>
+          <div style="color: var(--text-secondary); font-size: 13px;">
+            Aposta: <strong>R$ ${(bet.amount || 0).toFixed(2)}</strong> • ${bet.status === 'won' ? `Ganho: <strong style="color: var(--accent);">R$ ${((bet.winAmount || 0)).toFixed(2)}</strong> • ` : ''} ${date}
+          </div>
+        </div>
+      `;
             }).join('');
-
         } catch (error) {
             console.error('Erro ao carregar histórico:', error);
             historyDiv.innerHTML = '<p style="text-align: center; color: var(--danger); padding: 40px;">Erro ao carregar histórico</p>';
         }
     }
-
     // ==================== DEPÓSITOS ====================
     function selectAmount(amount) {
         selectedDepositAmount = amount;
         document.querySelectorAll('.amount-option').forEach(opt => opt.classList.remove('selected'));
         event.target.closest('.amount-option').classList.add('selected');
     }
-
     window.selectAmount = selectAmount;
-
     function selectPayment(method) {
         selectedPaymentMethod = method;
         document.querySelectorAll('.payment-method').forEach(pm => pm.classList.remove('selected'));
         event.target.closest('.payment-method').classList.add('selected');
     }
-
     window.selectPayment = selectPayment;
-
     async function addFunds() {
         if (!currentUser) return;
-
         const customAmount = document.getElementById('customAmount').value;
         const amount = customAmount ? parseFloat(customAmount) : selectedDepositAmount;
-
         if (!amount || amount <= 0) {
             showNotification('⚠️ Selecione um valor para depositar!', 'warning');
             return;
         }
-
         if (!selectedPaymentMethod) {
             showNotification('⚠️ Selecione um método de pagamento!', 'warning');
             return;
         }
-
-        // Calcular bônus
         let bonus = 0;
         if (amount >= 10 && amount < 25) bonus = 1;
         else if (amount >= 25 && amount < 50) bonus = 3;
@@ -3431,155 +3176,122 @@
         else if (amount >= 100 && amount < 250) bonus = 15;
         else if (amount >= 250 && amount < 500) bonus = 40;
         else if (amount >= 500) bonus = 100;
-
         const total = amount + bonus;
-
         try {
-            // Simular processamento
             showNotification('⏳ Processando depósito...', 'info');
-
             await new Promise(resolve => setTimeout(resolve, 2000));
-
-            // Atualizar saldo
             await db.collection('users').doc(currentUser.uid).update({
                 balance: firebase.firestore.FieldValue.increment(total)
             });
-
             currentUserData.balance += total;
             updateUserDisplay();
-
-            // Mostrar modal de sucesso
             document.getElementById('depositAmount').textContent = `R$ ${amount.toFixed(2)}`;
             document.getElementById('depositBonus').textContent = `R$ ${bonus.toFixed(2)}`;
             document.getElementById('newBalance').textContent = `R$ ${currentUserData.balance.toFixed(2)}`;
-
             document.getElementById('depositModal').classList.add('active');
             createConfetti();
-
-            // Limpar seleções
             selectedDepositAmount = 0;
             selectedPaymentMethod = '';
             document.getElementById('customAmount').value = '';
             document.querySelectorAll('.amount-option').forEach(opt => opt.classList.remove('selected'));
             document.querySelectorAll('.payment-method').forEach(pm => pm.classList.remove('selected'));
-
         } catch (error) {
             console.error('Erro ao adicionar fundos:', error);
             showNotification('❌ Erro ao processar depósito', 'error');
         }
     }
-
     window.addFunds = addFunds;
-
     // ==================== RESULTADOS ====================
     async function loadRecentDraws() {
         const drawsDiv = document.getElementById('recentDraws');
         drawsDiv.innerHTML = '<div style="text-align: center; padding: 20px;"><div class="spinner"></div></div>';
-
         try {
             const drawsSnapshot = await db.collection('draws')
-                .orderBy('timestamp', 'desc')
+                .orderBy('date', 'desc')
                 .limit(10)
                 .get();
-
             if (drawsSnapshot.empty) {
                 drawsDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 40px;">Nenhum sorteio realizado ainda.</p>';
                 return;
             }
-
             drawsDiv.innerHTML = drawsSnapshot.docs.map(doc => {
                 const draw = doc.data();
-                const animal = animals.find(a => a.number === draw.winningAnimal);
-                const date = draw.timestamp ? draw.timestamp.toDate().toLocaleString('pt-BR') : 'Data desconhecida';
-
+                const animal = draw.animal || {};
+                const date = draw.date ? draw.date.toDate().toLocaleString('pt-BR') : 'Data desconhecida';
                 return `
-                <div class="winner-item">
-                    <div style="width: 60px; height: 60px; background: ${animal.color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0;">
-                        ${animal.icon}
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-size: 18px; font-weight: 700; margin-bottom: 5px;">${animal.name}</div>
-                        <div style="color: var(--text-secondary); font-size: 14px;">
-                            Sorteio #${draw.drawNumber} • ${date}
-                        </div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 24px; font-weight: 800; color: ${animal.color};">#${animal.number}</div>
-                        <div style="font-size: 12px; color: var(--text-tertiary);">Grupo ${animal.group}</div>
-                    </div>
-                </div>
-            `;
+        <div class="winner-item">
+          <div style="width: 60px; height: 60px; background: ${animal.color || '#10B981'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0;">
+            ${animal.icon || '🎲'}
+          </div>
+          <div style="flex: 1;">
+            <div style="font-size: 18px; font-weight: 700; margin-bottom: 5px;">${animal.name || 'Animal'}</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">
+              Sorteio #${draw.drawNumber} • ${date}
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 24px; font-weight: 800; color: ${animal.color || '#10B981'};">#${animal.number || '?'}</div>
+            <div style="font-size: 12px; color: var(--text-tertiary);">Grupo ${animal.group || '?'}</div>
+          </div>
+        </div>
+      `;
             }).join('');
-
         } catch (error) {
             console.error('Erro ao carregar sorteios:', error);
             drawsDiv.innerHTML = '<p style="text-align: center; color: var(--danger); padding: 40px;">Erro ao carregar sorteios</p>';
         }
     }
-
     async function loadTopWinners() {
         const winnersDiv = document.getElementById('topWinners');
         winnersDiv.innerHTML = '<div style="text-align: center; padding: 20px;"><div class="spinner"></div></div>';
-
         try {
             const usersSnapshot = await db.collection('users')
                 .orderBy('totalWins', 'desc')
                 .limit(10)
                 .get();
-
             if (usersSnapshot.empty) {
                 winnersDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 40px;">Nenhum ganhador ainda.</p>';
                 return;
             }
-
             winnersDiv.innerHTML = usersSnapshot.docs.map((doc, index) => {
                 const user = doc.data();
                 const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
-
                 return `
-                <div class="winner-item">
-                    <div style="width: 50px; height: 50px; background: var(--accent-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">
-                        ${medal}
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-size: 16px; font-weight: 700; margin-bottom: 5px;">${user.email.split('@')[0]}</div>
-                        <div style="color: var(--text-secondary); font-size: 14px;">
-                            ${user.totalWins || 0} vitórias • Nível ${user.level || 1}
-                        </div>
-                    </div>
-                </div>
-            `;
+        <div class="winner-item">
+          <div style="width: 50px; height: 50px; background: var(--accent-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">
+            ${medal}
+          </div>
+          <div style="flex: 1;">
+            <div style="font-size: 16px; font-weight: 700; margin-bottom: 5px;">${user.email.split('@')[0]}</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">
+              ${user.totalWins || 0} vitórias • Nível ${user.level || 1}
+            </div>
+          </div>
+        </div>
+      `;
             }).join('');
-
         } catch (error) {
             console.error('Erro ao carregar ganhadores:', error);
             winnersDiv.innerHTML = '<p style="text-align: center; color: var(--danger); padding: 40px;">Erro ao carregar ganhadores</p>';
         }
     }
-
-    // ==================== MODALS ====================
+    // ==================== MODAIS ====================
     function closeModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.classList.remove('active');
     }
-
     window.closeModal = closeModal;
-
     function showTutorial() {
         document.getElementById('tutorialModal').classList.add('active');
         currentTutorialStep = 1;
         updateTutorialStep();
     }
-
     window.showTutorial = showTutorial;
-
     function nextTutorialStep(step) {
         currentTutorialStep = step;
         updateTutorialStep();
     }
-
     window.nextTutorialStep = nextTutorialStep;
-
     function updateTutorialStep() {
         document.querySelectorAll('.tutorial-modal-step').forEach((step, index) => {
             step.classList.remove('active');
@@ -3588,154 +3300,98 @@
             }
         });
     }
-
     function closeTutorial() {
         closeModal('tutorialModal');
         showSection('betting');
     }
-
     window.closeTutorial = closeTutorial;
-
     function showPromotions() {
         const modal = document.getElementById('promotionsModal');
         const list = document.getElementById('promotionsList');
-
         const promotions = [
-            {
-                icon: '🎁',
-                title: 'Bônus de Boas-Vindas',
-                description: 'R$ 50 grátis para novos usuários',
-                color: 'var(--accent)'
-            },
-            {
-                icon: '💰',
-                title: 'Dobro de Créditos',
-                description: 'Depósitos acima de R$ 100 ganham 15% de bônus',
-                color: 'var(--info)'
-            },
-            {
-                icon: '🎯',
-                title: 'Cashback Semanal',
-                description: '10% de cashback em todas as apostas perdidas',
-                color: 'var(--purple)'
-            },
-            {
-                icon: '⭐',
-                title: 'Programa VIP',
-                description: 'Benefícios exclusivos para jogadores frequentes',
-                color: 'var(--warning)'
-            }
+            { icon: '🎁', title: 'Bônus de Boas-Vindas', description: 'R$ 50 grátis para novos usuários', color: 'var(--accent)' },
+            { icon: '💰', title: 'Dobro de Créditos', description: 'Depósitos acima de R$ 100 ganham 15% de bônus', color: 'var(--info)' },
+            { icon: '🎯', title: 'Cashback Semanal', description: '10% de cashback em todas as apostas perdidas', color: 'var(--purple)' },
+            { icon: '⭐', title: 'Programa VIP', description: 'Benefícios exclusivos para jogadores frequentes', color: 'var(--warning)' }
         ];
-
         list.innerHTML = promotions.map(promo => `
-        <div style="background: var(--light-secondary); padding: 30px; border-radius: var(--radius-lg); border: 2px solid var(--border); transition: var(--transition);" onmouseover="this.style.borderColor='${promo.color}'; this.style.transform='translateY(-5px)'" onmouseout="this.style.borderColor='var(--border)'; this.style.transform='translateY(0)'">
-            <div style="font-size: 48px; margin-bottom: 20px;">${promo.icon}</div>
-            <h3 style="font-size: 20px; margin-bottom: 10px; color: var(--text-primary);">${promo.title}</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 20px;">${promo.description}</p>
-            <button class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;" onclick="closeModal('promotionsModal')">
-                <i class="fas fa-gift"></i> Ativar Promoção
-            </button>
-        </div>
-    `).join('');
-
+    <div style="background: var(--light-secondary); padding: 30px; border-radius: var(--radius-lg); border: 2px solid var(--border); transition: var(--transition);" onmouseover="this.style.borderColor='${promo.color}'; this.style.transform='translateY(-5px)'" onmouseout="this.style.borderColor='var(--border)'; this.style.transform='translateY(0)'">
+      <div style="font-size: 48px; margin-bottom: 20px;">${promo.icon}</div>
+      <h3 style="font-size: 20px; margin-bottom: 10px; color: var(--text-primary);">${promo.title}</h3>
+      <p style="color: var(--text-secondary); margin-bottom: 20px;">${promo.description}</p>
+      <button class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;" onclick="closeModal('promotionsModal')">
+        <i class="fas fa-gift"></i> Ativar Promoção
+      </button>
+    </div>
+  `).join('');
         modal.classList.add('active');
     }
-
     window.showPromotions = showPromotions;
-
     function showStats() {
         const modal = document.getElementById('statsModal');
-
-        // Calcular estatísticas
-        const totalBetted = userBets.reduce((sum, bet) => sum + bet.totalBet, 0);
+        const totalBetted = userBets.reduce((sum, bet) => sum + (bet.amount || 0), 0);
         const totalWon = 0; // Calcular baseado em apostas ganhas
         const winRate = currentUserData.totalBets > 0 ? ((currentUserData.totalWins / currentUserData.totalBets) * 100).toFixed(1) : 0;
-
         document.getElementById('statsModalTotalBet').textContent = `R$ ${totalBetted.toFixed(2)}`;
         document.getElementById('statsModalTotalWon').textContent = `R$ ${totalWon.toFixed(2)}`;
         document.getElementById('statsModalWinRate').textContent = `${winRate}%`;
         document.getElementById('statsModalBiggestWin').textContent = 'R$ 0.00';
-
         modal.classList.add('active');
     }
-
     window.showStats = showStats;
-
     function saveResponsibleLimits() {
         const dailyLimit = document.getElementById('dailyLimit').value;
         const timeLimit = document.getElementById('timeLimit').value;
         const selfExclude = document.getElementById('selfExclude').checked;
-
-        responsibleLimits = { dailyLimit, timeLimit, selfExclude };
-
         if (selfExclude) {
             showNotification('⚠️ Autoexclusão ativada por 24 horas', 'warning');
-            // Implementar lógica de autoexclusão
         }
-
         showNotification('✅ Limites salvos com sucesso!', 'success');
         closeModal('responsibleGamingModal');
     }
-
     window.saveResponsibleLimits = saveResponsibleLimits;
-
     function sendSupportMessage(e) {
         e.preventDefault();
-
-        const subject = document.getElementById('supportSubject').value;
         const message = document.getElementById('supportMessage').value;
-
         if (!message.trim()) {
             showNotification('⚠️ Digite uma mensagem!', 'warning');
             return;
         }
-
-        // Simular envio
         showNotification('✅ Mensagem enviada! Responderemos em breve.', 'success');
         document.getElementById('supportMessage').value = '';
         setTimeout(() => closeModal('supportModal'), 2000);
     }
-
     window.sendSupportMessage = sendSupportMessage;
-
     // ==================== NOTIFICAÇÕES ====================
     function showNotification(message, type = 'info') {
         const container = document.getElementById('notificationContainer');
-
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
-
         const icons = {
             success: 'fa-check-circle',
             error: 'fa-times-circle',
             warning: 'fa-exclamation-triangle',
             info: 'fa-info-circle'
         };
-
         notification.innerHTML = `
-        <div class="notification-icon">
-            <i class="fas ${icons[type]}"></i>
-        </div>
-        <div style="flex: 1;">
-            <div style="font-weight: 600; margin-bottom: 5px; color: var(--text-primary);">${message}</div>
-        </div>
-    `;
-
+    <div class="notification-icon">
+      <i class="fas ${icons[type]}"></i>
+    </div>
+    <div style="flex: 1;">
+      <div style="font-weight: 600; margin-bottom: 5px; color: var(--text-primary);">${message}</div>
+    </div>
+  `;
         container.appendChild(notification);
-
         setTimeout(() => notification.classList.add('show'), 10);
-
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 400);
         }, 3000);
     }
-
     // ==================== CONFETTI ====================
     function createConfetti() {
         const container = document.getElementById('confettiContainer');
         const colors = ['#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B'];
-
         for (let i = 0; i < 50; i++) {
             const confetti = document.createElement('div');
             confetti.className = 'confetti';
@@ -3743,9 +3399,7 @@
             confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             confetti.style.animationDelay = Math.random() * 3 + 's';
             confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
-
             container.appendChild(confetti);
-
             confetti.animate([
                 { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                 { transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
@@ -3755,40 +3409,35 @@
             }).onfinish = () => confetti.remove();
         }
     }
-
     // ==================== TEMA ESCURO ====================
     function initTheme() {
         const themeToggle = document.getElementById('themeToggle');
         const savedTheme = localStorage.getItem('theme') || 'light';
-
         document.documentElement.setAttribute('data-theme', savedTheme);
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
     }
-
     // ==================== ATUALIZAR DISPLAY DO USUÁRIO ====================
     function updateUserDisplay() {
         if (!currentUserData) return;
-
         const balanceElements = document.querySelectorAll('#userBalance, #accountBalance');
         balanceElements.forEach(el => {
-            el.textContent = `R$ ${(currentUserData.balance || 0).toFixed(2)}`;
+            if (el) {
+                el.textContent = `R$ ${(currentUserData.balance || 0).toFixed(2)}`;
+            }
         });
     }
-
     // ==================== MOSTRAR APP PRINCIPAL ====================
     function showMainApp() {
         document.getElementById('authScreen').style.display = 'none';
         document.getElementById('navbar').style.display = 'block';
-        showSection('home');
     }
-
     // ==================== PARTICLES.JS ====================
     function initParticles() {
         if (typeof particlesJS !== 'undefined') {
@@ -3799,36 +3448,17 @@
                     shape: { type: 'circle' },
                     opacity: { value: 0.5, random: false },
                     size: { value: 3, random: true },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: '#10B981',
-                        opacity: 0.4,
-                        width: 1
-                    },
-                    move: {
-                        enable: true,
-                        speed: 2,
-                        direction: 'none',
-                        random: false,
-                        straight: false,
-                        out_mode: 'out',
-                        bounce: false
-                    }
+                    line_linked: { enable: true, distance: 150, color: '#10B981', opacity: 0.4, width: 1 },
+                    move: { enable: true, speed: 2, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
                 },
                 interactivity: {
                     detect_on: 'canvas',
-                    events: {
-                        onhover: { enable: true, mode: 'repulse' },
-                        onclick: { enable: true, mode: 'push' },
-                        resize: true
-                    }
+                    events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true }
                 },
                 retina_detect: true
             });
         }
     }
-
     // ==================== SCROLL DA NAVBAR ====================
     window.addEventListener('scroll', () => {
         const navbar = document.getElementById('navbar');
@@ -3840,18 +3470,362 @@
             }
         }
     });
-
     // ==================== INICIALIZAÇÃO ====================
     document.addEventListener('DOMContentLoaded', () => {
         console.log('🎮 Inicializando Banca do Marcos...');
-
         initAuthTabs();
         initAnimalsGrid();
         initTheme();
         initParticles();
-
         console.log('✅ Interface carregada!');
     });
+    // ==================== SISTEMA DE TIMER (CORRIGIDO E MELHORADO) ====================
+    function initTimer() {
+        // Limpar anteriores
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        if (unsubscribeGlobal) {
+            unsubscribeGlobal();
+            unsubscribeGlobal = null;
+        }
+        console.log('🕐 Inicializando timer...');
+        // Listener em tempo real para dados globais
+        unsubscribeGlobal = db.collection('system').doc('global')
+            .onSnapshot((doc) => {
+                if (!doc.exists) {
+                    console.warn('⚠️ Documento global não existe. Inicializando...');
+                    forceInitializeSystem();
+                    return;
+                }
+                const data = doc.data();
+                console.log('📊 Dados globais atualizados:', data);
+                // Atualizar jackpot
+                if (data.jackpot !== undefined) {
+                    const jackpotEl = document.getElementById('jackpotAmount');
+                    if (jackpotEl) {
+                        jackpotEl.textContent = `R$ ${data.jackpot.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                    }
+                }
+                // Atualizar jogadores online
+                if (data.onlinePlayers !== undefined) {
+                    const onlineElements = document.querySelectorAll('.header-card:nth-child(3) div[style*="font-size: 32px"]');
+                    onlineElements.forEach(el => {
+                        el.textContent = data.onlinePlayers.toLocaleString();
+                    });
+                }
+                // Atualizar número do sorteio
+                if (data.drawNumber) {
+                    const drawNumElements = document.querySelectorAll('.header-card:nth-child(2) > div:last-child');
+                    drawNumElements.forEach(el => {
+                        el.textContent = `Sorteio #${data.drawNumber}`;
+                    });
+                }
+                // Atualizar timer com horário do próximo sorteio
+                if (data.nextDrawTime) {
+                    const nextDrawTime = data.nextDrawTime.toDate();
+                    console.log('⏰ Próximo sorteio:', nextDrawTime.toLocaleString('pt-BR'));
+                    updateTimerDisplay(nextDrawTime);
+                } else {
+                    console.warn('⚠️ nextDrawTime não definido');
+                }
+            }, (error) => {
+                console.error('❌ Erro no listener global:', error);
+                showNotification('⚠️ Erro ao conectar ao servidor', 'warning');
+            });
+        // Timer local que atualiza o countdown a cada segundo
+        timerInterval = setInterval(() => {
+            // O timer é atualizado pela função updateTimerDisplay
+            // que é chamada pelo listener acima
+        }, 1000);
+    }
+    // Função para atualizar o display do timer
+    let nextDrawTimeGlobal = null;
+    function updateTimerDisplay(nextDrawTime) {
+        nextDrawTimeGlobal = nextDrawTime;
+        // Limpar intervalo anterior
+        if (window.timerDisplayInterval) {
+            clearInterval(window.timerDisplayInterval);
+        }
+        // Criar novo intervalo para atualizar display
+        window.timerDisplayInterval = setInterval(() => {
+            if (!nextDrawTimeGlobal) return;
+            const now = new Date();
+            const diff = nextDrawTimeGlobal - now;
+            const timerEl = document.getElementById('drawTimer');
+            if (!timerEl) return;
+            if (diff <= 0) {
+                timerEl.textContent = '00:00';
+                timerEl.style.color = 'var(--danger)';
+                // Aguardar atualização do sistema
+                setTimeout(() => {
+                    timerEl.style.color = 'var(--accent)';
+                }, 3000);
+                return;
+            }
+            const minutesLeft = Math.floor(diff / (1000 * 60));
+            const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
+            timerEl.textContent = `${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
+            timerEl.style.color = 'var(--accent)';
+        }, 1000);
+    }
+    // ==================== FORÇAR INICIALIZAÇÃO DO SISTEMA ====================
+    async function forceInitializeSystem() {
+        try {
+            console.log('🔧 Forçando inicialização do sistema...');
+            const globalRef = db.collection('system').doc('global');
+            const globalDoc = await globalRef.get();
+            if (globalDoc.exists) {
+                console.log('✅ Sistema já existe, verificando campos...');
+                const data = globalDoc.data();
+                // Verificar se tem nextDrawTime
+                if (!data.nextDrawTime) {
+                    console.log('⚠️ nextDrawTime ausente, atualizando...');
+                    const nextDraw = getNextDrawTime();
+                    await globalRef.update({
+                        nextDrawTime: firebase.firestore.Timestamp.fromDate(nextDraw),
+                        lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log('✅ nextDrawTime atualizado para:', nextDraw.toLocaleString('pt-BR'));
+                }
+                return;
+            }
+            // Criar documento do zero
+            console.log('📝 Criando documento global...');
+            const nextDraw = getNextDrawTime();
+            await globalRef.set({
+                jackpot: 25847.50,
+                nextDrawTime: firebase.firestore.Timestamp.fromDate(nextDraw),
+                drawNumber: 202412345,
+                onlinePlayers: 0,
+                lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log('✅ Sistema inicializado!');
+            console.log('📅 Próximo sorteio:', nextDraw.toLocaleString('pt-BR'));
+            showNotification('✅ Sistema inicializado com sucesso!', 'success');
+        } catch (error) {
+            console.error('❌ Erro ao inicializar sistema:', error);
+            showNotification('❌ Erro ao inicializar: ' + error.message, 'error');
+        }
+    }
+    // Função auxiliar para calcular próximo horário de sorteio
+    function getNextDrawTime() {
+        const now = new Date();
+        const minutes = now.getMinutes();
+        // Próximo múltiplo de 5
+        const nextMinutes = Math.ceil(minutes / 5) * 5;
+        const nextDraw = new Date(now);
+        if (nextMinutes >= 60) {
+            nextDraw.setHours(nextDraw.getHours() + 1);
+            nextDraw.setMinutes(0, 0, 0);
+        } else {
+            nextDraw.setMinutes(nextMinutes, 0, 0);
+        }
+        return nextDraw;
+    }
+    // ==================== INICIALIZAR SISTEMA GLOBAL (MELHORADO) ====================
+    async function initializeGlobalDrawSystem() {
+        try {
+            console.log('🚀 Verificando sistema global...');
+            const globalRef = db.collection('system').doc('global');
+            // Tentar obter com retry
+            let globalDoc = null;
+            for (let i = 0; i < 3; i++) {
+                try {
+                    globalDoc = await globalRef.get();
+                    break;
+                } catch (error) {
+                    if (i === 2) throw error;
+                    console.log(`Tentativa ${i + 1} falhou, tentando novamente...`);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+            if (!globalDoc.exists) {
+                console.log('⚠️ Sistema não inicializado. Criando...');
+                await forceInitializeSystem();
+            } else {
+                const data = globalDoc.data();
+                console.log('✅ Sistema já inicializado');
+                console.log('📊 Dados:', {
+                    jackpot: data.jackpot,
+                    drawNumber: data.drawNumber,
+                    nextDrawTime: data.nextDrawTime?.toDate().toLocaleString('pt-BR'),
+                    onlinePlayers: data.onlinePlayers
+                });
+                // Verificar se nextDrawTime existe
+                if (!data.nextDrawTime) {
+                    console.warn('⚠️ nextDrawTime ausente, corrigindo...');
+                    await forceInitializeSystem();
+                }
+            }
+        } catch (error) {
+            console.error('❌ Erro ao verificar sistema:', error);
+            showNotification('⚠️ Erro de conexão. Tentando reconectar...', 'warning');
+            // Tentar novamente após 3 segundos
+            setTimeout(() => {
+                forceInitializeSystem();
+            }, 3000);
+        }
+    }
+    // ==================== BOTÃO DE DEBUG (ADICIONAR NO HTML) ====================
+    // Adicione este botão na seção de apostas para debug:
+    /* <button onclick="debugSystem()" style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background: var(--info); color: white; border: none; border-radius: 10px; cursor: pointer; z-index: 9999;"> 🔧 Debug Sistema </button> */
+    async function debugSystem() {
+        console.log('🔍 DIAGNÓSTICO DO SISTEMA');
+        console.log('========================');
+        try {
+            // 1. Verificar autenticação
+            console.log('1️⃣ Autenticação:');
+            console.log(' Usuário:', currentUser ? currentUser.email : 'NÃO LOGADO');
+            console.log(' UID:', currentUser ? currentUser.uid : 'N/A');
+            // 2. Verificar dados do usuário
+            console.log('2️⃣ Dados do usuário:');
+            console.log(' Balance:', currentUserData?.balance);
+            console.log(' Total Bets:', currentUserData?.totalBets);
+            // 3. Verificar sistema global
+            console.log('3️⃣ Sistema Global:');
+            const globalDoc = await db.collection('system').doc('global').get();
+            if (!globalDoc.exists) {
+                console.log(' ❌ Documento não existe!');
+                console.log(' Executando inicialização forçada...');
+                await forceInitializeSystem();
+            } else {
+                const data = globalDoc.data();
+                console.log(' ✅ Documento existe');
+                console.log(' Jackpot:', data.jackpot);
+                console.log(' Draw Number:', data.drawNumber);
+                console.log(' Next Draw:', data.nextDrawTime?.toDate().toLocaleString('pt-BR'));
+                console.log(' Online Players:', data.onlinePlayers);
+                if (!data.nextDrawTime) {
+                    console.log(' ⚠️ PROBLEMA: nextDrawTime não existe!');
+                    console.log(' Corrigindo...');
+                    await forceInitializeSystem();
+                }
+            }
+            // 4. Verificar listeners
+            console.log('4️⃣ Listeners:');
+            console.log(' Timer Interval:', timerInterval ? '✅ Ativo' : '❌ Inativo');
+            console.log(' Global Listener:', unsubscribeGlobal ? '✅ Ativo' : '❌ Inativo');
+            console.log(' User Bets Listener:', unsubscribeUserBets ? '✅ Ativo' : '❌ Inativo');
+            console.log(' Draws Listener:', unsubscribeDraws ? '✅ Ativo' : '❌ Inativo');
+            // 5. Verificar apostas pendentes
+            console.log('5️⃣ Apostas Pendentes:');
+            if (currentUser) {
+                const pendingSnapshot = await db.collection('users')
+                    .doc(currentUser.uid)
+                    .collection('bets')
+                    .where('status', '==', 'pending')
+                    .get();
+                console.log(' Total:', pendingSnapshot.size);
+            }
+            // 6. Verificar últimos sorteios
+            console.log('6️⃣ Últimos Sorteios:');
+            const drawsSnapshot = await db.collection('draws')
+                .orderBy('date', 'desc')
+                .limit(3)
+                .get();
+            console.log(' Total registrado:', drawsSnapshot.size);
+            drawsSnapshot.forEach(doc => {
+                const draw = doc.data();
+                console.log(' -', draw.animal?.name, '(#' + draw.drawNumber + ')', draw.date?.toDate().toLocaleString('pt-BR'));
+            });
+            console.log('========================');
+            console.log('✅ Diagnóstico concluído!');
+            showNotification('🔍 Diagnóstico concluído! Veja o console (F12)', 'info');
+        } catch (error) {
+            console.error('❌ Erro no diagnóstico:', error);
+            showNotification('❌ Erro no diagnóstico: ' + error.message, 'error');
+        }
+    }
+    window.debugSystem = debugSystem;
+    // ==================== ATUALIZAÇÃO DO AUTH STATE (ADICIONAR INICIALIZAÇÃO FORÇADA) ====================
+    auth.onAuthStateChanged(async (user) => {
+        console.log('🔄 Estado de autenticação mudou:', user ? user.email : 'Nenhum usuário');
+
+        if (user) {
+            currentUser = user;
+            showMainApp(); // Mostra a interface imediatamente
+
+            let success = false;
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (attempts < maxAttempts && !success) {
+                attempts++;
+                try {
+                    showNotification(`🔄 Carregando dados... (tentativa ${attempts}/${maxAttempts})`, 'info');
+
+                    // 1. Forçar inicialização do sistema global (com retry interno)
+                    await forceInitializeSystem();
+
+                    // 2. Carregar dados do usuário
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+
+                    if (userDoc.exists) {
+                        currentUserData = { ...userDoc.data(), uid: user.uid };
+                        console.log('✅ Dados do usuário carregados');
+                    } else {
+                        console.log('⚠️ Criando novo usuário...');
+                        await createNewUserData(user.uid);
+                    }
+
+                    // 3. Configurar presença e listeners
+                    await updateUserPresence(true);
+                    initTimer();
+                    initUserBetsListener();
+                    initDrawResultsListener();
+                    updateUserDisplay();
+
+                    showNotification('✅ Bem-vindo! Tudo carregado.', 'success');
+                    success = true;
+
+                } catch (error) {
+                    console.warn(`Tentativa ${attempts} falhou:`, error.message);
+
+                    if (attempts < maxAttempts) {
+                        // Espera progressivamente mais a cada tentativa
+                        await new Promise(resolve => setTimeout(resolve, 2000 * attempts));
+                    }
+                }
+            }
+
+            if (!success) {
+                // Depois de todas as tentativas, ainda offline
+                showNotification('📶 Sem conexão com a internet', 'warning');
+                showNotification('Seus dados serão carregados automaticamente quando voltar online.', 'info');
+
+                // Dados mínimos locais para não quebrar a interface
+                if (!currentUserData) {
+                    currentUserData = {
+                        uid: user.uid,
+                        email: user.email,
+                        balance: 0,
+                        totalBets: 0,
+                        totalWins: 0,
+                        level: 1
+                    };
+                }
+                updateUserDisplay();
+
+                // Tenta novamente quando voltar online
+                window.addEventListener('online', () => {
+                    showNotification('🔗 Conexão restaurada! Recarregando dados...', 'info');
+                    location.reload(); // Forma mais simples e segura
+                });
+            }
+
+        } else {
+            // Usuário deslogado
+            currentUser = null;
+            currentUserData = null;
+            cleanupListeners();
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('navbar').style.display = 'none';
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+        }
+    });
 </script>
+
 </body>
 </html>
