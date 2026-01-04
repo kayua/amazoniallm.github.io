@@ -1,6 +1,19 @@
 function connectMultiplayer() {
     try {
-        multiplayer.ws = new WebSocket(multiplayer.serverUrl);
+        // ✅ MODIFICAÇÃO: Garantir que estamos usando ws:// (não seguro) para LAN
+        let serverUrl = multiplayer.serverUrl;
+
+        // Se a URL não especificar ws:// ou wss://, assume ws:// para LAN
+        if (!serverUrl.startsWith('ws://') && !serverUrl.startsWith('wss://')) {
+            serverUrl = 'ws://' + serverUrl;
+        }
+
+        // ✅ MODIFICAÇÃO IMPORTANTE: Substituir wss:// por ws:// para conexão LAN sem SSL
+        serverUrl = serverUrl.replace('wss://', 'ws://');
+
+        console.log(`🌐 Conectando em: ${serverUrl}`);
+
+        multiplayer.ws = new WebSocket(serverUrl);
 
         multiplayer.ws.onopen = () => {
             multiplayer.connected = true;
@@ -14,6 +27,9 @@ function connectMultiplayer() {
 
             // Solicitar lista de jogadores
             sendMultiplayerMessage({ type: 'request_players' });
+
+            // ✅ NOVO: Solicitar informações do servidor
+            sendMultiplayerMessage({ type: 'request_server_info' });
         };
 
         multiplayer.ws.onmessage = (event) => {
@@ -28,6 +44,18 @@ function connectMultiplayer() {
         multiplayer.ws.onerror = (error) => {
             console.error('❌ Erro WebSocket:', error);
             showNotification('❌ Erro ao conectar ao servidor', 'error');
+
+            // ✅ NOVO: Tentar reconectar automaticamente após 3 segundos
+            if (!multiplayer.reconnecting) {
+                multiplayer.reconnecting = true;
+                setTimeout(() => {
+                    console.log('🔄 Tentando reconectar...');
+                    multiplayer.reconnecting = false;
+                    if (!multiplayer.connected) {
+                        connectMultiplayer();
+                    }
+                }, 3000);
+            }
         };
 
         multiplayer.ws.onclose = () => {
@@ -52,11 +80,31 @@ function connectMultiplayer() {
             showNotification('🔌 Desconectado do servidor', 'info');
             updateMultiplayerMenuStatus();
             updatePlayerCount();
+
+            // ✅ NOVO: Tentar reconectar automaticamente (se não foi desconexão manual)
+            if (!multiplayer.reconnecting && multiplayer.enabled) {
+                multiplayer.reconnecting = true;
+                setTimeout(() => {
+                    console.log('🔄 Tentando reconectar automaticamente...');
+                    multiplayer.reconnecting = false;
+                    if (multiplayer.enabled && !multiplayer.connected) {
+                        connectMultiplayer();
+                    }
+                }, 5000);
+            }
         };
 
     } catch (error) {
         console.error('❌ Erro ao conectar:', error);
         showNotification('❌ Falha na conexão: ' + error.message, 'error');
+
+        // ✅ NOVO: Tentar reconectar em caso de erro
+        if (multiplayer.enabled) {
+            setTimeout(() => {
+                console.log('🔄 Tentando reconectar após erro...');
+                connectMultiplayer();
+            }, 3000);
+        }
     }
 }
 
