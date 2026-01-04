@@ -485,6 +485,751 @@
       }
     }
 
+
+    /* ============================================
+   MENU DE CONFIGURAÇÕES MODERNO
+   ============================================ */
+
+    #settings-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 2000;
+      display: none;
+      overflow-y: auto;
+      backdrop-filter: blur(10px);
+    }
+
+    #settings-menu.open {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .settings-container {
+      max-width: 900px;
+      width: 90%;
+      margin: auto;
+      padding: 30px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(76, 175, 80, 0.3);
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .settings-header h2 {
+      color: #4CAF50;
+      font-size: 32px;
+      margin: 0;
+      text-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+      letter-spacing: 2px;
+    }
+
+    .close-settings {
+      background: transparent;
+      border: 2px solid #ff4444;
+      color: #ff4444;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-settings:hover {
+      background: #ff4444;
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    /* Tabs de Categorias */
+    .settings-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .settings-tab {
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid transparent;
+      color: #ffffff;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .settings-tab:hover {
+      background: rgba(76, 175, 80, 0.2);
+      border-color: rgba(76, 175, 80, 0.5);
+    }
+
+    .settings-tab.active {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      border-color: #4CAF50;
+      box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+    }
+
+    /* Conteúdo das Tabs */
+    .settings-content {
+      display: none;
+    }
+
+    .settings-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* Grupos de Configurações */
+    .settings-group {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .settings-group h3 {
+      color: #4CAF50;
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .settings-group h3::before {
+      content: '▶';
+      font-size: 14px;
+    }
+
+    /* Item de Configuração */
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+
+    .setting-label {
+      color: #ffffff;
+      font-size: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .setting-description {
+      color: #888;
+      font-size: 12px;
+    }
+
+    /* Controles */
+    .setting-control {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    /* Switch Toggle */
+    .switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: #555;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .switch.active {
+      background: #4CAF50;
+    }
+
+    .switch-handle {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .switch.active .switch-handle {
+      left: 32px;
+    }
+
+    /* Slider */
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 250px;
+    }
+
+    .slider {
+      flex: 1;
+      height: 6px;
+      background: #555;
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #4CAF50;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+      transition: all 0.2s;
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+    }
+
+    .slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #4CAF50;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    }
+
+    .slider-value {
+      color: #4CAF50;
+      font-weight: bold;
+      min-width: 50px;
+      text-align: right;
+      font-size: 16px;
+    }
+
+    /* Select Dropdown */
+    .custom-select {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(76, 175, 80, 0.3);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      min-width: 150px;
+      transition: all 0.3s;
+    }
+
+    .custom-select:hover {
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.2);
+    }
+
+    .custom-select:focus {
+      outline: none;
+      box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+    }
+
+    .custom-select option {
+      background: #1a1a2e;
+      color: white;
+    }
+
+    /* Botão de Ação */
+    .action-button {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .action-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+    }
+
+    .action-button:active {
+      transform: translateY(0);
+    }
+
+    .action-button.danger {
+      background: linear-gradient(135deg, #f44336, #c62828);
+    }
+
+    /* Botões de Controle */
+    .control-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 2px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .control-buttons button {
+      flex: 1;
+      padding: 15px;
+      font-size: 16px;
+    }
+
+    /* Info Box */
+    .info-box {
+      background: rgba(33, 150, 243, 0.1);
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      color: #90caf9;
+      font-size: 14px;
+    }
+
+    .warning-box {
+      background: rgba(255, 152, 0, 0.1);
+      border-left: 4px solid #FF9800;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      color: #ffb74d;
+      font-size: 14px;
+    }
+
+    /* Estatísticas */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #888;
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .settings-container {
+        padding: 20px;
+        margin: 10px;
+        width: calc(100% - 20px);
+      }
+
+      .settings-header h2 {
+        font-size: 24px;
+      }
+
+      .settings-tabs {
+        flex-direction: column;
+      }
+
+      .settings-tab {
+        width: 100%;
+        text-align: center;
+      }
+
+      .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .slider-container {
+        width: 100%;
+      }
+
+      .control-buttons {
+        flex-direction: column;
+      }
+    }
+
+    /* Animação de Loading */
+    .loading-spinner {
+      border: 3px solid rgba(76, 175, 80, 0.3);
+      border-top: 3px solid #4CAF50;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Botão de Configurações no Menu Principal */
+    .menu-settings-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .menu-settings-btn:hover {
+      background: rgba(76, 175, 80, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }/* Status Multiplayer */
+    #multiplayer-status {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.9);
+      padding: 10px 15px;
+      border-radius: 8px;
+      color: white;
+      font-size: 12px;
+      z-index: 150;
+      min-width: 150px;
+    }
+
+    #multiplayer-status.hidden {
+      display: none;
+    }
+
+    .mp-status-line {
+      display: flex;
+      justify-content: space-between;
+      margin: 3px 0;
+    }
+
+    .mp-connected {
+      color: #4CAF50;
+      font-weight: bold;
+    }
+
+    .mp-disconnected {
+      color: #f44336;
+      font-weight: bold;
+    }
+
+    /* Chat Multiplayer */
+    #multiplayer-chat {
+      position: fixed;
+      bottom: 100px;
+      left: 10px;
+      width: 400px;
+      max-width: 90vw;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      z-index: 200;
+    }
+
+    #multiplayer-chat.open {
+      display: flex;
+    }
+
+    #chat-messages {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding: 5px;
+    }
+
+    .chat-msg {
+      margin: 5px 0;
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .chat-player {
+      color: #4CAF50;
+      font-weight: bold;
+    }
+
+    .chat-system .chat-text-system {
+      color: #FFD700;
+      font-style: italic;
+    }
+
+    .chat-player .chat-text {
+      color: white;
+    }
+
+    .chat-time {
+      color: #888;
+      font-size: 11px;
+      margin-right: 5px;
+    }
+
+    #chat-input-container {
+      display: flex;
+      gap: 5px;
+    }
+
+    #chat-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(76, 175, 80, 0.5);
+      color: white;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 13px;
+    }
+
+    #chat-input:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    #chat-send {
+      background: #4CAF50;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #chat-send:hover {
+      background: #66BB6A;
+    }
+
+    /* Menu Multiplayer */
+    #multiplayer-menu {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.95);
+      border: 4px solid #4CAF50;
+      border-radius: 15px;
+      padding: 30px;
+      z-index: 2000;
+      display: none;
+      min-width: 400px;
+    }
+
+    #multiplayer-menu.open {
+      display: block;
+    }
+
+    .mp-menu-title {
+      color: #4CAF50;
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    }
+
+    .mp-menu-section {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .mp-menu-section h3 {
+      color: #4CAF50;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .mp-input-group {
+      margin: 10px 0;
+    }
+
+    .mp-input-group label {
+      color: white;
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .mp-input-group input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(76, 175, 80, 0.5);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .mp-input-group input:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    .mp-button {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      border: none;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      width: 100%;
+      margin: 5px 0;
+      transition: all 0.3s;
+    }
+
+    .mp-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+    }
+
+    .mp-button.danger {
+      background: linear-gradient(135deg, #f44336, #c62828);
+    }
+
+    .mp-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .mp-status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .mp-status-indicator.online {
+      background: #4CAF50;
+      box-shadow: 0 0 10px #4CAF50;
+    }
+
+    .mp-status-indicator.offline {
+      background: #f44336;
+    }
+
+    .mp-info-box {
+      background: rgba(33, 150, 243, 0.1);
+      border-left: 4px solid #2196F3;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      color: #90caf9;
+      font-size: 13px;
+    }
+
+    /* Scroll customizado */
+    #chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #chat-messages::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+    }
+
+    #chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(76, 175, 80, 0.5);
+      border-radius: 3px;
+    }
+
+    #chat-messages::-webkit-scrollbar-thumb:hover {
+      background: rgba(76, 175, 80, 0.8);
+    }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      #multiplayer-chat {
+        width: calc(100% - 20px);
+        bottom: 80px;
+      }
+
+      #multiplayer-menu {
+        min-width: auto;
+        width: 90%;
+        padding: 20px;
+      }
+
+      #multiplayer-status {
+        font-size: 10px;
+        padding: 8px 12px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -619,6 +1364,436 @@
 
 <button class="mobile-top-btn" id="mobile-prev-slot">◀</button>
 <button class="mobile-top-btn" id="mobile-next-slot">▶</button>
+
+<div id="settings-menu">
+  <div class="settings-container">
+    <div class="settings-header">
+      <h2>⚙️ CONFIGURAÇÕES</h2>
+      <button class="close-settings" onclick="closeSettings()">×</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="settings-tabs">
+      <button class="settings-tab active" onclick="switchTab('graphics')">🎨 Gráficos</button>
+      <button class="settings-tab" onclick="switchTab('gameplay')">🎮 Gameplay</button>
+      <button class="settings-tab" onclick="switchTab('controls')">⌨️ Controles</button>
+      <button class="settings-tab" onclick="switchTab('audio')">🔊 Áudio</button>
+      <button class="settings-tab" onclick="switchTab('info')">ℹ️ Info</button>
+    </div>
+
+    <!-- Conteúdo: Gráficos -->
+    <div id="tab-graphics" class="settings-content active">
+      <div class="settings-group">
+        <h3>Qualidade Visual</h3>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Distância de Renderização</span>
+            <span class="setting-description">Quantos chunks são carregados ao redor do jogador</span>
+          </div>
+          <div class="setting-control">
+            <div class="slider-container">
+              <input type="range" class="slider" id="render-distance" min="1" max="12" value="1"
+                     oninput="updateSetting('renderDistance', this.value)">
+              <span class="slider-value" id="render-distance-value">1</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Antialiasing</span>
+            <span class="setting-description">Suaviza bordas dos objetos</span>
+          </div>
+          <div class="setting-control">
+            <div class="switch" id="antialiasing-switch" onclick="toggleSwitch('antialiasing')">
+              <div class="switch-handle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Sombras</span>
+            <span class="setting-description">Renderizar sombras dinâmicas</span>
+          </div>
+          <div class="setting-control">
+            <div class="switch active" id="shadows-switch" onclick="toggleSwitch('shadows')">
+              <div class="switch-handle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Névoa</span>
+            <span class="setting-description">Efeito de névoa atmosférica</span>
+          </div>
+          <div class="setting-control">
+            <div class="switch active" id="fog-switch" onclick="toggleSwitch('fog')">
+              <div class="switch-handle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Partículas</span>
+            <span class="setting-description">Intensidade de efeitos de partículas</span>
+          </div>
+          <div class="setting-control">
+            <select class="custom-select" id="particles-select" onchange="updateSetting('particles', this.value)">
+              <option value="all">Todas</option>
+              <option value="minimal">Mínimas</option>
+              <option value="none">Desativadas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>FPS Alvo</span>
+            <span class="setting-description">Limite de quadros por segundo</span>
+          </div>
+          <div class="setting-control">
+            <select class="custom-select" id="fps-select" onchange="updateSetting('fpsLimit', this.value)">
+              <option value="unlimited">Ilimitado</option>
+              <option value="144">144 FPS</option>
+              <option value="120">120 FPS</option>
+              <option value="60">60 FPS</option>
+              <option value="30">30 FPS</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        💡 Dica: Reduzir a distância de renderização e desativar sombras pode melhorar significativamente a performance.
+      </div>
+    </div>
+
+    <!-- Conteúdo: Gameplay -->
+    <div id="tab-gameplay" class="settings-content">
+      <div class="settings-group">
+        <h3>Mecânicas de Jogo</h3>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Dificuldade</span>
+            <span class="setting-description">Altera dano de inimigos e spawn</span>
+          </div>
+          <div class="setting-control">
+            <select class="custom-select" id="difficulty-select" onchange="updateSetting('difficulty', this.value)">
+              <option value="peaceful">Pacífico</option>
+              <option value="easy">Fácil</option>
+              <option value="normal" selected>Normal</option>
+              <option value="hard">Difícil</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Modo Criativo</span>
+            <span class="setting-description">Recursos ilimitados e invencibilidade</span>
+          </div>
+          <div class="setting-control">
+            <div class="switch" id="creative-switch" onclick="toggleSwitch('creative')">
+              <div class="switch-handle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Auto-Jump</span>
+            <span class="setting-description">Pular automaticamente ao encontrar obstáculos</span>
+          </div>
+          <div class="setting-control">
+            <div class="switch" id="autojump-switch" onclick="toggleSwitch('autoJump')">
+              <div class="switch-handle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Spawn de Inimigos</span>
+            <span class="setting-description">Frequência de aparição de mobs hostis</span>
+          </div>
+          <div class="setting-control">
+            <div class="slider-container">
+              <input type="range" class="slider" id="mob-spawn" min="0" max="100" value="50"
+                     oninput="updateSetting('mobSpawn', this.value)">
+              <span class="slider-value" id="mob-spawn-value">50%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Regeneração de Vida</span>
+            <span class="setting-description">Velocidade de recuperação de HP</span>
+          </div>
+          <div class="setting-control">
+            <div class="slider-container">
+              <input type="range" class="slider" id="health-regen" min="0" max="10" value="5"
+                     oninput="updateSetting('healthRegen', this.value)">
+              <span class="slider-value" id="health-regen-value">5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conteúdo: Controles -->
+    <div id="tab-controls" class="settings-content">
+      <div class="settings-group">
+        <h3>Sensibilidade</h3>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Sensibilidade do Mouse</span>
+            <span class="setting-description">Velocidade de rotação da câmera</span>
+          </div>
+          <div class="setting-control">
+            <div class="slider-container">
+              <input type="range" class="slider" id="mouse-sensitivity" min="1" max="20" value="10"
+                     oninput="updateSetting('mouseSensitivity', this.value)">
+              <span class="slider-value" id="mouse-sensitivity-value">10</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Inverter Eixo Y</span>
+            <span class="setting-description">Inverter direção vertical do mouse</span>
+          </div>
+          <div class="setting-control">
+            <div class="switch" id="invert-y-switch" onclick="toggleSwitch('invertY')">
+              <div class="switch-handle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Sensibilidade Touch (Mobile)</span>
+            <span class="setting-description">Velocidade de rotação no mobile</span>
+          </div>
+          <div class="setting-control">
+            <div class="slider-container">
+              <input type="range" class="slider" id="touch-sensitivity" min="1" max="20" value="10"
+                     oninput="updateSetting('touchSensitivity', this.value)">
+              <span class="slider-value" id="touch-sensitivity-value">10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>Atalhos de Teclado</h3>
+        <div class="info-box">
+          <strong>Controles Atuais:</strong><br>
+          • WASD - Movimento<br>
+          • Espaço - Pular<br>
+          • Shift - Correr/Descer<br>
+          • F - Modo Voo<br>
+          • E - Inventário<br>
+          • Q - Jogar Item<br>
+          • 1-9 - Selecionar Slot<br>
+          • Mouse - Olhar / Interagir
+        </div>
+        <button class="action-button">🔄 Restaurar Padrão</button>
+      </div>
+    </div>
+
+    <!-- Conteúdo: Áudio -->
+    <div id="tab-audio" class="settings-content">
+      <div class="settings-group">
+        <h3>Volume</h3>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Volume Mestre</span>
+            <span class="setting-description">Volume geral do jogo</span>
+          </div>
+          <div class="setting-control">
+            <div class="slider-container">
+              <input type="range" class="slider" id="master-volume" min="0" max="100" value="70"
+                     oninput="updateSetting('masterVolume', this.value)">
+              <span class="slider-value" id="master-volume-value">70%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Efeitos Sonoros</span>
+            <span class="setting-description">Volume de sons de ação</span>
+          </div>
+          <div class="setting-control">
+            <div class="slider-container">
+              <input type="range" class="slider" id="sfx-volume" min="0" max="100" value="80"
+                     oninput="updateSetting('sfxVolume', this.value)">
+              <span class="slider-value" id="sfx-volume-value">80%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Música de Fundo</span>
+            <span class="setting-description">Volume da música ambiente</span>
+          </div>
+          <div class="setting-control">
+            <div class="slider-container">
+              <input type="range" class="slider" id="music-volume" min="0" max="100" value="50"
+                     oninput="updateSetting('musicVolume', this.value)">
+              <span class="slider-value" id="music-volume-value">50%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <span>Sons Ambiente</span>
+            <span class="setting-description">Sons de natureza e clima</span>
+          </div>
+          <div class="setting-control">
+            <div class="slider-container">
+              <input type="range" class="slider" id="ambient-volume" min="0" max="100" value="60"
+                     oninput="updateSetting('ambientVolume', this.value)">
+              <span class="slider-value" id="ambient-volume-value">60%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="warning-box">
+        ⚠️ Nota: Sistema de áudio será implementado em versão futura.
+      </div>
+    </div>
+
+    <!-- Conteúdo: Info -->
+    <div id="tab-info" class="settings-content">
+      <div class="settings-group">
+        <h3>Informações do Sistema</h3>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-fps">60</div>
+            <div class="stat-label">FPS Atual</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-chunks">0</div>
+            <div class="stat-label">Chunks Carregados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-entities">0</div>
+            <div class="stat-label">Entidades</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-memory">--</div>
+            <div class="stat-label">Memória Usada</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>Sobre o Jogo</h3>
+        <div class="info-box">
+          <strong>Minecraft Ultra Otimizado</strong><br>
+          Versão: 1.0.0<br>
+          Motor: Three.js r128<br>
+          <br>
+          Desenvolvido com foco em performance e jogabilidade.<br>
+          <br>
+          © 2026 - Todos os direitos reservados
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>Dados do Jogo</h3>
+        <button class="action-button" onclick="exportGameData()">📥 Exportar Mundo</button>
+        <button class="action-button" onclick="importGameData()">📤 Importar Mundo</button>
+        <button class="action-button danger" onclick="resetGameData()">🗑️ Limpar Todos os Dados</button>
+      </div>
+    </div>
+
+    <!-- Botões de Controle -->
+    <div class="control-buttons">
+      <button class="action-button" onclick="saveSettings()">💾 Salvar</button>
+      <button class="action-button" onclick="resetSettings()">🔄 Restaurar Padrão</button>
+      <button class="action-button" onclick="closeSettings()">✖️ Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div id="multiplayer-status" class="hidden">
+  <div class="mp-status-line">
+    <span>Status:</span>
+    <span id="mp-status" class="mp-disconnected">Desconectado</span>
+  </div>
+  <div class="mp-status-line">
+    <span>Jogadores:</span>
+    <span id="mp-players-count">0</span>
+  </div>
+</div>
+
+<!-- Chat Multiplayer -->
+<div id="multiplayer-chat">
+  <div id="chat-messages"></div>
+  <div id="chat-input-container">
+    <input type="text" id="chat-input" placeholder="Digite sua mensagem... (Enter para enviar)" maxlength="200">
+    <button id="chat-send" onclick="sendChatMessage(document.getElementById('chat-input').value)">Enviar</button>
+  </div>
+</div>
+
+<!-- Menu Multiplayer -->
+<div id="multiplayer-menu">
+  <h2 class="mp-menu-title">🌐 MULTIPLAYER</h2>
+
+  <div class="mp-menu-section">
+    <h3>Conexão</h3>
+
+    <div class="mp-input-group">
+      <label>Servidor:</label>
+      <input type="text" id="mp-server-url" value="ws://localhost:8765" placeholder="ws://localhost:8765">
+    </div>
+
+    <div class="mp-input-group">
+      <label>Seu Nome:</label>
+      <input type="text" id="mp-player-name" placeholder="Seu Nome" maxlength="20">
+    </div>
+
+    <div class="mp-info-box">
+      <span class="mp-status-indicator" id="mp-indicator"></span>
+      <span id="mp-connection-status">Não conectado</span>
+    </div>
+  </div>
+
+  <div class="mp-menu-section">
+    <h3>Controles</h3>
+    <div style="color: white; font-size: 13px; line-height: 1.6;">
+      • <strong>T</strong> - Abrir chat<br>
+      • <strong>Enter</strong> - Enviar mensagem<br>
+      • <strong>ESC</strong> - Fechar chat<br>
+    </div>
+  </div>
+
+  <button class="mp-button" id="mp-connect-btn" onclick="toggleMultiplayerConnection()">
+    Conectar
+  </button>
+
+  <button class="mp-button danger" onclick="closeMultiplayerMenu()">
+    Fechar
+  </button>
+</div>
+
+
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -835,48 +2010,6 @@
     player.selectedSlot = 0;
   }
 
-  function createMaterialsWithEmissive() {
-    for (let type in blockTypes) {
-      const block = blockTypes[type];
-      const texture = createTexture(type);
-
-      if (block.emissive) {
-        // Material emissivo para blocos que brilham
-        materials[type] = new THREE.MeshBasicMaterial({
-          map: texture,
-          emissive: block.color,
-          emissiveIntensity: 0.8
-        });
-      } else if (type === 'glass' || type === 'ice') {
-        materials[type] = new THREE.MeshLambertMaterial({
-          map: texture,
-          transparent: true,
-          opacity: 0.7,
-          side: THREE.DoubleSide
-        });
-      } else if (type === 'water') {
-        materials[type] = new THREE.MeshLambertMaterial({
-          map: texture,
-          transparent: true,
-          opacity: 0.6,
-          side: THREE.DoubleSide
-        });
-      } else if (type === 'leaves') {
-        materials[type] = new THREE.MeshLambertMaterial({
-          map: texture,
-          transparent: true,
-          opacity: 0.9,
-          side: THREE.DoubleSide,
-          alphaTest: 0.5
-        });
-      } else {
-        materials[type] = new THREE.MeshLambertMaterial({
-          map: texture,
-          flatShading: false // ✅ Desativado para melhor aparência com texturas
-        });
-      }
-    }
-  }
   function createCoalOreTexture(ctx, size) {
     createStoneTexture(ctx, size);
 
@@ -1220,59 +2353,6 @@
     }
 
     return totalFaces;
-  }
-
-  function updateVisibleChunks() {
-    const px = camera.position.x;
-    const pz = camera.position.z;
-    const chunk = worldToChunk(px, pz);
-
-    const chunksToGenerate = [];
-    const chunksToMesh = [];
-
-    for (let cx = chunk.x - RENDER_DISTANCE; cx <= chunk.x + RENDER_DISTANCE; cx++) {
-      for (let cz = chunk.z - RENDER_DISTANCE; cz <= chunk.z + RENDER_DISTANCE; cz++) {
-        const chunkKey = getChunkKey(cx, cz);
-
-        if (!chunks[chunkKey]) {
-          chunksToGenerate.push([cx, cz]);
-        } else if (!chunkMeshes[chunkKey]) {
-          chunksToMesh.push([cx, cz]);
-        }
-      }
-    }
-
-    chunksToGenerate.forEach(([cx, cz]) => {
-      generateChunk(cx, cz);
-      spawnAnimals(cx, cz);
-      spawnEnemies(cx, cz); // ✅ ADICIONAR ESTA LINHA
-    });
-
-    chunksToMesh.forEach(([cx, cz]) => buildChunkMesh(cx, cz));
-
-    const chunksToRemove = [];
-    for (let key in chunkMeshes) {
-      const [cx, cz] = key.split(',').map(Number);
-      const dx = Math.abs(cx - chunk.x);
-      const dz = Math.abs(cz - chunk.z);
-
-      if (dx > RENDER_DISTANCE || dz > RENDER_DISTANCE) {
-        chunksToRemove.push(key);
-      }
-    }
-
-    chunksToRemove.forEach(key => {
-      const [cx, cz] = key.split(',').map(Number);
-      scene.remove(chunkMeshes[key]);
-      chunkMeshes[key].children.forEach(child => {
-        child.geometry.dispose();
-      });
-      delete chunkMeshes[key];
-      removeAnimalsInChunk(cx, cz);
-      removeEnemiesInChunk(cx, cz); // ✅ ADICIONAR ESTA LINHA
-    });
-
-    updateFaceCount();
   }
 
   function removeEnemiesInChunk(chunkX, chunkZ) {
@@ -2048,10 +3128,10 @@
     const biome = hash(chunkX * 0.1, chunkZ * 0.1);
     let animalCount = 0;
 
-    if (biome > 0.7) {
+    if (biome > 0.5) {
       animalCount = Math.floor(Math.random() * 2) + 1; // Menos animais em biomas extremos
     } else {
-      animalCount = Math.floor(Math.random() * 4) + 2; // Mais animais em biomas normais
+      animalCount = Math.floor(Math.random() * 2) + 2; // Mais animais em biomas normais
     }
 
     for (let i = 0; i < animalCount; i++) {
@@ -2301,88 +3381,43 @@
     return result;
   }
 
-  // Atualizar a função de placeBlock para verificar colisão adequadamente
-  function placeBlock(x, y, z, type) {
-    if (getBlock(x, y, z)) return;
 
-    // Verificar se o bloco está dentro do jogador
-    const playerBox = new THREE.Box3(
-            new THREE.Vector3(
-                    camera.position.x - PLAYER_WIDTH/2,
-                    camera.position.y - PLAYER_HEIGHT/2,
-                    camera.position.z - PLAYER_WIDTH/2
-            ),
-            new THREE.Vector3(
-                    camera.position.x + PLAYER_WIDTH/2,
-                    camera.position.y + PLAYER_HEIGHT/2,
-                    camera.position.z + PLAYER_WIDTH/2
-            )
-    );
-
-    const blockBox = new THREE.Box3(
-            new THREE.Vector3(x - 0.5, y - 0.5, z - 0.5),
-            new THREE.Vector3(x + 0.5, y + 0.5, z + 0.5)
-    );
-
-    if (playerBox.intersectsBox(blockBox)) return;
-
-    // Verificar se tem o item no inventário
-    const selectedItem = getSelectedItem();
-    if (selectedItem === type && removeFromInventory(player.selectedSlot, 1)) {
-      setBlock(x, y, z, type);
-
-      // Reconstruir chunks afetados
-      const chunk = worldToChunk(x, z);
-      const chunksToUpdate = new Set();
-      chunksToUpdate.add(getChunkKey(chunk.x, chunk.z));
-
-      const localX = ((x % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
-      const localZ = ((z % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
-
-      if (localX === 0) chunksToUpdate.add(getChunkKey(chunk.x - 1, chunk.z));
-      if (localX === CHUNK_SIZE - 1) chunksToUpdate.add(getChunkKey(chunk.x + 1, chunk.z));
-      if (localZ === 0) chunksToUpdate.add(getChunkKey(chunk.x, chunk.z - 1));
-      if (localZ === CHUNK_SIZE - 1) chunksToUpdate.add(getChunkKey(chunk.x, chunk.z + 1));
-
-      chunksToUpdate.forEach(key => {
-        const [cx, cz] = key.split(',').map(Number);
-        if (chunkMeshes[key]) {
-          buildChunkMesh(cx, cz);
-        }
-      });
-
-      updateFaceCount();
-    }
-  }
-
-  // Atualizar função removeBlock para lidar com física
   function removeBlock(x, y, z) {
     const block = getBlock(x, y, z);
     if (!block || block.type === 'bedrock') return;
 
-    // Verificar se remover este bloco causaria queda do jogador
-    const playerFeetY = Math.floor(camera.position.y - PLAYER_HEIGHT/2);
-    const playerBlockX = Math.floor(camera.position.x);
-    const playerBlockZ = Math.floor(camera.position.z);
-
-    // Se o jogador está em cima deste bloco e não há outro bloco abaixo
-    if (playerBlockX === x && playerBlockZ === z && playerFeetY === y) {
-      let hasSupport = false;
-      for (let dy = 1; dy <= 3; dy++) {
-        const belowBlock = getBlock(x, y - dy, z);
-        if (belowBlock && belowBlock.type !== 'leaves' && belowBlock.type !== 'glass') {
-          hasSupport = true;
-          break;
-        }
-      }
-
-      if (!hasSupport) {
-        // O jogador cairá, não remover o bloco
-        return;
-      }
+    // ✨ ILUMINAÇÃO: Remover luz se o bloco for emissivo
+    if (blockTypes[block.type] && blockTypes[block.type].emissive) {
+      removeBlockLight(x, y, z);
     }
 
-    createBreakAnimation(block);
+    // Criar partículas do bloco quebrado
+    if (particleSystem) {
+      const color = blockTypes[block.type] ? blockTypes[block.type].color : 0xFFFFFF;
+      particleSystem.emit(
+              new THREE.Vector3(x, y, z),
+              color,
+              15,
+              0.2
+      );
+    }
+
+    // ✅ SINCRONIZAR MULTIPLAYER
+    if (multiplayer.connected) {
+      console.log('📤 Sincronizando quebra de bloco em:', x, y, z);
+      sendMultiplayerMessage({
+        type: 'block_break',
+        x: Math.floor(x),
+        y: Math.floor(y),
+        z: Math.floor(z)
+      });
+    }
+
+    // Remover água se for bloco de água
+    if (block.type === 'water') {
+      waterSystem.removeWater(x, y, z);
+    }
+
     addToInventory(block.type, 1);
     removeBlockData(x, y, z);
 
@@ -2408,9 +3443,6 @@
 
     updateFaceCount();
   }
-
-
-
 
 
 
@@ -5240,6 +6272,807 @@
     return texture;
   }
 
+  // ============================================
+  // SISTEMA DE TEXTURAS PROCEDURAIS MELHORADO
+  // ============================================
+
+  function createEnhancedTexture(type, size = 64) {
+    if (textureCache[type]) return textureCache[type];
+
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+
+    switch(type) {
+      case 'grass':
+        createEnhancedGrassTexture(ctx, size);
+        break;
+
+      case 'dirt':
+        createEnhancedDirtTexture(ctx, size);
+        break;
+
+      case 'stone':
+        createEnhancedStoneTexture(ctx, size);
+        break;
+
+      case 'wood':
+        createEnhancedWoodTexture(ctx, size);
+        break;
+
+      case 'leaves':
+        createEnhancedLeavesTexture(ctx, size);
+        break;
+
+      case 'sand':
+        createEnhancedSandTexture(ctx, size);
+        break;
+
+      case 'water':
+        createEnhancedWaterTexture(ctx, size);
+        break;
+
+      case 'glass':
+        createEnhancedGlassTexture(ctx, size);
+        break;
+
+      case 'cobblestone':
+        createEnhancedCobblestoneTexture(ctx, size);
+        break;
+
+      case 'planks':
+        createEnhancedPlanksTexture(ctx, size);
+        break;
+
+      case 'brick':
+        createEnhancedBrickTexture(ctx, size);
+        break;
+
+      case 'bedrock':
+        createEnhancedBedrockTexture(ctx, size);
+        break;
+
+      default:
+        // Usar a função original para outros tipos
+        return createTexture(type, size);
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+
+    textureCache[type] = texture;
+    return texture;
+  }
+
+  // ============================================
+  // TEXTURAS MELHORADAS
+  // ============================================
+
+  function createEnhancedGrassTexture(ctx, size) {
+    // Base verde com gradiente
+    const gradient = ctx.createLinearGradient(0, 0, 0, size);
+    gradient.addColorStop(0, '#7CFC00');
+    gradient.addColorStop(0.3, '#6BCD00');
+    gradient.addColorStop(0.6, '#5AB000');
+    gradient.addColorStop(1, '#4A9000');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Primeira camada - variação de cor
+    for (let i = 0; i < size * 8; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 40 - 20;
+      const opacity = 0.2 + Math.random() * 0.3;
+      ctx.fillStyle = `rgba(${100 + shade}, ${200 + shade}, ${0}, ${opacity})`;
+      const s = 1 + Math.random() * 2;
+      ctx.fillRect(x, y, s, s);
+    }
+
+    // Segunda camada - textura de grama
+    for (let i = 0; i < size * 4; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 60 - 30;
+      ctx.fillStyle = `rgba(${80 + shade}, ${180 + shade}, ${0}, 0.4)`;
+      ctx.fillRect(x, y, 3, 3);
+    }
+
+    // Manchas escuras (terra aparecendo)
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 2 + Math.random() * 4;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grd.addColorStop(0, 'rgba(70, 50, 20, 0.4)');
+      grd.addColorStop(1, 'rgba(70, 50, 20, 0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+
+    // Brilhos de orvalho
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.fillStyle = 'rgba(200, 255, 150, 0.3)';
+      ctx.fillRect(x, y, 2, 2);
+    }
+
+    // Detalhes de grama individual
+    for (let i = 0; i < 30; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.strokeStyle = `rgba(90, 180, 0, ${0.2 + Math.random() * 0.3})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.random() * 2 - 1, y - 3 - Math.random() * 2);
+      ctx.stroke();
+    }
+  }
+
+  function createEnhancedDirtTexture(ctx, size) {
+    // Base marrom com gradiente
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#8B4513');
+    gradient.addColorStop(0.5, '#7A3C0F');
+    gradient.addColorStop(1, '#6B350D');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Primeira camada - variação de terra
+    for (let i = 0; i < size * 12; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 80 - 40;
+      const opacity = 0.3 + Math.random() * 0.5;
+      ctx.fillStyle = `rgba(${139 + shade}, ${69 + shade}, ${19 + shade}, ${opacity})`;
+      const s = 2 + Math.random() * 4;
+      ctx.fillRect(x, y, s, s);
+    }
+
+    // Pedrinhas e cascalho
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 40;
+      ctx.fillStyle = `rgba(${100 + shade}, ${100 + shade}, ${100 + shade}, 0.4)`;
+      const s = 1 + Math.random() * 3;
+      ctx.fillRect(x, y, s, s);
+    }
+
+    // Raízes e material orgânico
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.strokeStyle = 'rgba(60, 40, 20, 0.5)';
+      ctx.lineWidth = 1 + Math.random();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.random() * 8 - 4, y + Math.random() * 8 - 4);
+      ctx.stroke();
+    }
+
+    // Manchas úmidas
+    for (let i = 0; i < 12; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 3 + Math.random() * 5;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grd.addColorStop(0, 'rgba(50, 30, 10, 0.3)');
+      grd.addColorStop(1, 'rgba(50, 30, 10, 0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+  }
+
+  function createEnhancedStoneTexture(ctx, size) {
+    // Base cinza com gradiente
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#888888');
+    gradient.addColorStop(0.5, '#787878');
+    gradient.addColorStop(1, '#686868');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Primeira camada - variação de pedra
+    for (let i = 0; i < size * 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 100 - 50;
+      const opacity = 0.2 + Math.random() * 0.4;
+      ctx.fillStyle = `rgba(${128 + shade}, ${128 + shade}, ${128 + shade}, ${opacity})`;
+      const s = 2 + Math.random() * 5;
+      ctx.fillRect(x, y, s, s);
+    }
+
+    // Veios minerais
+    for (let i = 0; i < 8; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.strokeStyle = `rgba(${150 + Math.random() * 50}, ${150 + Math.random() * 50}, ${150 + Math.random() * 50}, 0.4)`;
+      ctx.lineWidth = 1 + Math.random() * 2;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      for (let j = 0; j < 3 + Math.random() * 3; j++) {
+        ctx.lineTo(x + Math.random() * 15 - 7.5, y + Math.random() * 15 - 7.5);
+      }
+      ctx.stroke();
+    }
+
+    // Rachaduras
+    for (let i = 0; i < 12; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.strokeStyle = 'rgba(40, 40, 40, 0.4)';
+      ctx.lineWidth = 0.5 + Math.random();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.random() * 10 - 5, y + Math.random() * 10 - 5);
+      ctx.stroke();
+    }
+
+    // Cristais pequenos
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.fillStyle = `rgba(200, 200, 200, ${0.2 + Math.random() * 0.3})`;
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+
+  function createEnhancedWoodTexture(ctx, size) {
+    // Base madeira
+    ctx.fillStyle = '#654321';
+    ctx.fillRect(0, 0, size, size);
+
+    // Anéis de crescimento com mais detalhe
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const maxRadius = size * 0.8;
+
+    for (let r = 3; r < maxRadius; r += 2 + Math.random() * 3) {
+      const thickness = 1 + Math.random() * 2;
+      const shade = Math.random() * 50 - 25;
+      const opacity = 0.2 + Math.random() * 0.4;
+
+      ctx.strokeStyle = `rgba(${80 + shade}, ${50 + shade}, ${20 + shade}, ${opacity})`;
+      ctx.lineWidth = thickness;
+
+      ctx.beginPath();
+      // Anel irregular
+      for (let angle = 0; angle <= Math.PI * 2; angle += 0.1) {
+        const variation = Math.sin(angle * 8) * 2 + Math.random() * 2;
+        const radius = r + variation;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+
+        if (angle === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    // Veios verticais
+    for (let i = 0; i < 40; i++) {
+      const x = Math.random() * size;
+      ctx.strokeStyle = `rgba(70, 45, 15, ${0.1 + Math.random() * 0.2})`;
+      ctx.lineWidth = 0.5 + Math.random();
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + Math.random() * 4 - 2, size);
+      ctx.stroke();
+    }
+
+    // Nós da madeira
+    for (let i = 0; i < 3; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 3 + Math.random() * 6;
+
+      for (let r = 0; r < radius; r += 1) {
+        const shade = Math.random() * 30 - 15;
+        ctx.strokeStyle = `rgba(${50 + shade}, ${30 + shade}, ${10 + shade}, 0.3)`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+  }
+
+  function createEnhancedLeavesTexture(ctx, size) {
+    // Base verde escuro
+    ctx.fillStyle = '#228B22';
+    ctx.fillRect(0, 0, size, size);
+
+    // Primeira camada - variação de folhas
+    for (let i = 0; i < size * 10; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 80 - 40;
+      const opacity = 0.3 + Math.random() * 0.5;
+      ctx.fillStyle = `rgba(${34 + shade}, ${139 + shade}, ${34 + shade}, ${opacity})`;
+      const s = 2 + Math.random() * 4;
+      ctx.fillRect(x, y, s, s);
+    }
+
+    // Folhas individuais detalhadas
+    for (let i = 0; i < 50; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const size_leaf = 2 + Math.random() * 3;
+      const shade = Math.random() * 60 - 30;
+
+      ctx.fillStyle = `rgba(${50 + shade}, ${200 + shade}, ${50 + shade}, ${0.4 + Math.random() * 0.3})`;
+      ctx.beginPath();
+      // Forma de folha
+      ctx.ellipse(x, y, size_leaf, size_leaf * 1.5, Math.random() * Math.PI * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Veias das folhas
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.strokeStyle = `rgba(20, 100, 20, ${0.2 + Math.random() * 0.2})`;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.random() * 4 - 2, y + 3 + Math.random() * 2);
+      ctx.stroke();
+    }
+
+    // Áreas de luz (onde o sol passa)
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 2 + Math.random() * 4;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grd.addColorStop(0, 'rgba(150, 255, 100, 0.3)');
+      grd.addColorStop(1, 'rgba(150, 255, 100, 0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+
+    // Buracos/transparência
+    for (let i = 0; i < 8; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+      ctx.fillRect(x, y, 3, 3);
+    }
+  }
+
+  function createEnhancedSandTexture(ctx, size) {
+    // Base areia com gradiente
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#F4A460');
+    gradient.addColorStop(0.5, '#E39450');
+    gradient.addColorStop(1, '#D28440');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Primeira camada - grãos de areia
+    for (let i = 0; i < size * 20; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 60 - 30;
+      const opacity = 0.3 + Math.random() * 0.4;
+      ctx.fillStyle = `rgba(${244 + shade}, ${164 + shade}, ${96 + shade}, ${opacity})`;
+      ctx.fillRect(x, y, 1, 1);
+    }
+
+    // Segunda camada - grãos maiores
+    for (let i = 0; i < size * 8; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 40 - 20;
+      ctx.fillStyle = `rgba(${240 + shade}, ${160 + shade}, ${90 + shade}, 0.5)`;
+      ctx.fillRect(x, y, 2, 2);
+    }
+
+    // Manchas mais escuras
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 2 + Math.random() * 4;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grd.addColorStop(0, 'rgba(200, 140, 80, 0.3)');
+      grd.addColorStop(1, 'rgba(200, 140, 80, 0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+
+    // Brilhos
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.fillStyle = 'rgba(255, 220, 180, 0.4)';
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+
+  function createEnhancedWaterTexture(ctx, size) {
+    // Base azul com gradiente
+    const gradient = ctx.createLinearGradient(0, 0, 0, size);
+    gradient.addColorStop(0, '#1E90FF');
+    gradient.addColorStop(0.5, '#1873CC');
+    gradient.addColorStop(1, '#1565C0');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Ondas (múltiplas camadas)
+    for (let layer = 0; layer < 3; layer++) {
+      const amplitude = 4 - layer;
+      const frequency = 0.15 + layer * 0.05;
+      const yOffset = layer * size / 3;
+
+      for (let y = 0; y < size / 3; y += 2) {
+        ctx.strokeStyle = `rgba(${100 + layer * 20}, ${149 + layer * 20}, ${237 + layer * 20}, ${0.3 - layer * 0.1})`;
+        ctx.lineWidth = 1 + layer * 0.5;
+        ctx.beginPath();
+
+        for (let x = 0; x < size; x += 2) {
+          const wave = Math.sin(x * frequency + y * 0.1) * amplitude;
+          const wavY = yOffset + y + wave;
+
+          if (x === 0) {
+            ctx.moveTo(x, wavY);
+          } else {
+            ctx.lineTo(x, wavY);
+          }
+        }
+        ctx.stroke();
+      }
+    }
+
+    // Reflexos de luz (cáusticos)
+    for (let i = 0; i < 30; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 2 + Math.random() * 5;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grd.addColorStop(0, 'rgba(173, 216, 230, 0.5)');
+      grd.addColorStop(0.5, 'rgba(173, 216, 230, 0.2)');
+      grd.addColorStop(1, 'rgba(173, 216, 230, 0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+
+    // Espuma/bolhas
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const r = 1 + Math.random() * 2;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function createEnhancedGlassTexture(ctx, size) {
+    // Base transparente azulada
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, 'rgba(173, 216, 230, 0.3)');
+    gradient.addColorStop(0.5, 'rgba(173, 216, 230, 0.2)');
+    gradient.addColorStop(1, 'rgba(173, 216, 230, 0.3)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Reflexos diagonais
+    for (let i = 0; i < 10; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const length = 10 + Math.random() * 20;
+      const angle = Math.random() * Math.PI / 4 - Math.PI / 8;
+
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 + Math.random() * 0.3})`;
+      ctx.lineWidth = 1 + Math.random() * 2;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.cos(angle) * length, y + Math.sin(angle) * length);
+      ctx.stroke();
+    }
+
+    // Brilhos pontuais
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 2 + Math.random() * 4;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grd.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+      grd.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+
+    // Imperfeições (bolhas)
+    for (let i = 0; i < 8; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const r = 1 + Math.random() * 2;
+      ctx.fillStyle = 'rgba(230, 240, 250, 0.4)';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function createEnhancedCobblestoneTexture(ctx, size) {
+    // Base cinza escuro
+    ctx.fillStyle = '#6B6B6B';
+    ctx.fillRect(0, 0, size, size);
+
+    // Pedras individuais com mais detalhe
+    const stones = 20;
+    const stoneSize = size / 5;
+
+    for (let i = 0; i < stones; i++) {
+      const col = i % 5;
+      const row = Math.floor(i / 5);
+      const x = col * stoneSize + Math.random() * 6 - 3;
+      const y = row * stoneSize + Math.random() * 6 - 3;
+      const w = stoneSize - Math.random() * 8;
+      const h = stoneSize - Math.random() * 8;
+
+      // Base da pedra com gradiente
+      const shade = Math.random() * 50 - 25;
+      const grd = ctx.createLinearGradient(x, y, x + w, y + h);
+      grd.addColorStop(0, `rgb(${107 + shade}, ${107 + shade}, ${107 + shade})`);
+      grd.addColorStop(1, `rgb(${87 + shade}, ${87 + shade}, ${87 + shade})`);
+      ctx.fillStyle = grd;
+      ctx.fillRect(x, y, w, h);
+
+      // Textura interna da pedra
+      for (let j = 0; j < 10; j++) {
+        const px = x + Math.random() * w;
+        const py = y + Math.random() * h;
+        const pshade = Math.random() * 40 - 20;
+        ctx.fillStyle = `rgba(${107 + pshade}, ${107 + pshade}, ${107 + pshade}, 0.5)`;
+        ctx.fillRect(px, py, 2, 2);
+      }
+
+      // Contorno da pedra
+      ctx.strokeStyle = 'rgba(40, 40, 40, 0.6)';
+      ctx.lineWidth = 1 + Math.random();
+      ctx.strokeRect(x, y, w, h);
+
+      // Destaque (luz)
+      ctx.strokeStyle = 'rgba(150, 150, 150, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + w * 0.3, y);
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, y + h * 0.3);
+      ctx.stroke();
+    }
+
+    // Argamassa entre as pedras
+    ctx.fillStyle = 'rgba(80, 80, 80, 0.5)';
+    for (let i = 1; i < 5; i++) {
+      ctx.fillRect(i * stoneSize - 2, 0, 4, size);
+      ctx.fillRect(0, i * stoneSize - 2, size, 4);
+    }
+  }
+
+  function createEnhancedPlanksTexture(ctx, size) {
+    // Base madeira clara
+    ctx.fillStyle = '#C19A6B';
+    ctx.fillRect(0, 0, size, size);
+
+    // Tábuas horizontais com detalhe
+    const plankHeight = size / 5;
+
+    for (let i = 0; i < 5; i++) {
+      const y = i * plankHeight;
+      const shade = Math.random() * 40 - 20;
+
+      // Gradiente na tábua
+      const grd = ctx.createLinearGradient(0, y, 0, y + plankHeight);
+      grd.addColorStop(0, `rgb(${193 + shade}, ${154 + shade}, ${107 + shade})`);
+      grd.addColorStop(0.5, `rgb(${183 + shade}, ${144 + shade}, ${97 + shade})`);
+      grd.addColorStop(1, `rgb(${193 + shade}, ${154 + shade}, ${107 + shade})`);
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, y, size, plankHeight - 3);
+
+      // Veios da madeira
+      for (let j = 0; j < 30; j++) {
+        const x = Math.random() * size;
+        const vshade = Math.random() * 30 - 15;
+        ctx.strokeStyle = `rgba(${140 + vshade}, ${100 + vshade}, ${60 + vshade}, ${0.15 + Math.random() * 0.2})`;
+        ctx.lineWidth = 0.5 + Math.random() * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.random() * 4 - 2, y + plankHeight - 3);
+        ctx.stroke();
+      }
+
+      // Nós da madeira
+      if (Math.random() > 0.6) {
+        const kx = Math.random() * size;
+        const ky = y + Math.random() * (plankHeight - 3);
+        const kr = 2 + Math.random() * 4;
+
+        for (let r = 0; r < kr; r++) {
+          ctx.strokeStyle = `rgba(100, 70, 40, ${0.3 - r * 0.05})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(kx, ky, r, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      // Linha entre tábuas
+      ctx.fillStyle = 'rgba(80, 60, 40, 0.6)';
+      ctx.fillRect(0, y + plankHeight - 3, size, 3);
+
+      // Detalhe de sombra na linha
+      ctx.fillStyle = 'rgba(60, 40, 20, 0.4)';
+      ctx.fillRect(0, y + plankHeight - 3, size, 1);
+    }
+
+    // Pregos decorativos
+    for (let i = 0; i < 10; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.fillStyle = 'rgba(100, 100, 100, 0.5)';
+      ctx.beginPath();
+      ctx.arc(x, y, 1, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Brilho do prego
+      ctx.fillStyle = 'rgba(200, 200, 200, 0.3)';
+      ctx.fillRect(x - 0.5, y - 1, 1, 0.5);
+    }
+  }
+
+  function createEnhancedBrickTexture(ctx, size) {
+    // Base tijolo
+    ctx.fillStyle = '#B22222';
+    ctx.fillRect(0, 0, size, size);
+
+    // Padrão de tijolos detalhado
+    const brickW = size / 5;
+    const brickH = size / 10;
+
+    for (let row = 0; row < 10; row++) {
+      const offset = (row % 2) * (brickW / 2);
+
+      for (let col = 0; col < 6; col++) {
+        const x = col * brickW + offset;
+        const y = row * brickH;
+
+        if (x < size && y < size) {
+          // Base do tijolo com gradiente
+          const shade = Math.random() * 50 - 25;
+          const grd = ctx.createLinearGradient(x, y, x + brickW, y + brickH);
+          grd.addColorStop(0, `rgb(${178 + shade}, ${34 + shade}, ${34 + shade})`);
+          grd.addColorStop(1, `rgb(${158 + shade}, ${24 + shade}, ${24 + shade})`);
+          ctx.fillStyle = grd;
+          ctx.fillRect(x + 1, y + 1, brickW - 3, brickH - 3);
+
+          // Textura do tijolo
+          for (let i = 0; i < 8; i++) {
+            const bx = x + 1 + Math.random() * (brickW - 3);
+            const by = y + 1 + Math.random() * (brickH - 3);
+            const bshade = Math.random() * 40 - 20;
+            ctx.fillStyle = `rgba(${178 + bshade}, ${34 + bshade}, ${34 + bshade}, 0.4)`;
+            ctx.fillRect(bx, by, 2, 2);
+          }
+
+          // Destaque (luz)
+          ctx.strokeStyle = 'rgba(220, 80, 80, 0.3)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x + 1, y + 1);
+          ctx.lineTo(x + brickW - 3, y + 1);
+          ctx.moveTo(x + 1, y + 1);
+          ctx.lineTo(x + 1, y + brickH - 3);
+          ctx.stroke();
+
+          // Sombra
+          ctx.strokeStyle = 'rgba(100, 20, 20, 0.4)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x + brickW - 2, y + 1);
+          ctx.lineTo(x + brickW - 2, y + brickH - 2);
+          ctx.lineTo(x + 1, y + brickH - 2);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Argamassa
+    ctx.fillStyle = '#CCCCCC';
+    for (let row = 0; row < 10; row++) {
+      ctx.fillRect(0, row * brickH - 1, size, 2);
+    }
+
+    for (let col = 0; col < 6; col++) {
+      for (let row = 0; row < 10; row++) {
+        const offset = (row % 2) * (brickW / 2);
+        const x = col * brickW + offset;
+        ctx.fillRect(x - 1, 0, 2, size);
+      }
+    }
+  }
+
+  function createEnhancedBedrockTexture(ctx, size) {
+    // Base muito escura
+    ctx.fillStyle = '#1C1C1C';
+    ctx.fillRect(0, 0, size, size);
+
+    // Primeira camada - variação escura
+    for (let i = 0; i < size * 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 40 - 20;
+      const opacity = 0.3 + Math.random() * 0.4;
+      ctx.fillStyle = `rgba(${28 + shade}, ${28 + shade}, ${28 + shade}, ${opacity})`;
+      const s = 2 + Math.random() * 5;
+      ctx.fillRect(x, y, s, s);
+    }
+
+    // Manchas muito escuras (quase pretas)
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 3 + Math.random() * 6;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grd.addColorStop(0, 'rgba(0, 0, 0, 0.6)');
+      grd.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+
+    // Cristais escuros
+    for (let i = 0; i < 30; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 60;
+      ctx.fillStyle = `rgba(${28 + shade}, ${28 + shade}, ${46 + shade}, 0.5)`;
+      ctx.fillRect(x, y, 3, 3);
+    }
+
+    // Rachaduras profundas
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.lineWidth = 1 + Math.random() * 2;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      for (let j = 0; j < 2 + Math.random() * 3; j++) {
+        ctx.lineTo(x + Math.random() * 15 - 7.5, y + Math.random() * 15 - 7.5);
+      }
+      ctx.stroke();
+    }
+
+    // Brilhos místicos (roxos escuros)
+    for (let i = 0; i < 10; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 2 + Math.random() * 4;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grd.addColorStop(0, 'rgba(100, 50, 150, 0.3)');
+      grd.addColorStop(1, 'rgba(100, 50, 150, 0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
+  }
+
+
   function createGrassTexture(ctx, size) {
     // Base verde vibrante
     const gradient = ctx.createLinearGradient(0, 0, 0, size);
@@ -5281,6 +7114,7 @@
       ctx.fillRect(x, y, 1, 1);
     }
   }
+
   function createDirtTexture(ctx, size) {
     // Base marrom
     ctx.fillStyle = '#8B4513';
@@ -5595,6 +7429,465 @@
       ctx.fillRect(x, y, 2, 2);
     }
   }
+
+  // ============================================
+  // SISTEMA MULTIPLAYER COMPLETO
+  // ============================================
+
+  const multiplayer = {
+    enabled: false,
+    connected: false,
+    ws: null,
+    serverUrl: 'ws://localhost:8765',
+    playerId: null,
+    playerName: 'Jogador' + Math.floor(Math.random() * 1000),
+    otherPlayers: new Map(),
+    lastPositionSent: 0,
+    positionUpdateInterval: 50 // ms
+  };
+
+  function connectMultiplayer() {
+    try {
+      multiplayer.ws = new WebSocket(multiplayer.serverUrl);
+
+      multiplayer.ws.onopen = () => {
+        multiplayer.connected = true;
+        console.log('✅ Conectado ao servidor multiplayer');
+
+        document.getElementById('mp-status').textContent = 'Conectado';
+        document.getElementById('mp-status').className = 'mp-connected';
+
+        showNotification('✅ Conectado ao servidor!', 'success');
+        updateMultiplayerMenuStatus();
+
+        // Solicitar lista de jogadores
+        sendMultiplayerMessage({ type: 'request_players' });
+      };
+
+      multiplayer.ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          handleMultiplayerMessage(data);
+        } catch (e) {
+          console.error('Erro ao processar mensagem:', e);
+        }
+      };
+
+      multiplayer.ws.onerror = (error) => {
+        console.error('❌ Erro WebSocket:', error);
+        showNotification('❌ Erro ao conectar ao servidor', 'error');
+      };
+
+      multiplayer.ws.onclose = () => {
+        multiplayer.connected = false;
+        console.log('🔌 Desconectado do servidor');
+
+        document.getElementById('mp-status').textContent = 'Desconectado';
+        document.getElementById('mp-status').className = 'mp-disconnected';
+
+        // Remover outros jogadores
+        multiplayer.otherPlayers.forEach(player => {
+          if (player.mesh) {
+            scene.remove(player.mesh);
+            player.mesh.traverse(child => {
+              if (child.geometry) child.geometry.dispose();
+              if (child.material) child.material.dispose();
+            });
+          }
+        });
+        multiplayer.otherPlayers.clear();
+
+        showNotification('🔌 Desconectado do servidor', 'info');
+        updateMultiplayerMenuStatus();
+        updatePlayerCount();
+      };
+
+    } catch (error) {
+      console.error('❌ Erro ao conectar:', error);
+      showNotification('❌ Falha na conexão: ' + error.message, 'error');
+    }
+  }
+
+  function disconnectMultiplayer() {
+    if (multiplayer.ws) {
+      multiplayer.ws.close();
+      multiplayer.ws = null;
+    }
+    multiplayer.connected = false;
+    multiplayer.enabled = false;
+  }
+
+  function sendMultiplayerMessage(data) {
+    if (multiplayer.connected && multiplayer.ws) {
+      try {
+        multiplayer.ws.send(JSON.stringify(data));
+      } catch (e) {
+        console.error('Erro ao enviar mensagem:', e);
+      }
+    }
+  }
+
+  function handleMultiplayerMessage(data) {
+    switch (data.type) {
+      case 'player_id':
+        multiplayer.playerId = data.playerId;
+        console.log('🆔 ID recebido:', multiplayer.playerId);
+
+        // Enviar nome do jogador
+        const playerName = document.getElementById('mp-player-name').value || multiplayer.playerName;
+        sendMultiplayerMessage({
+          type: 'set_name',
+          name: playerName
+        });
+        break;
+
+      case 'players_list':
+        // Criar meshes para jogadores existentes
+        data.players.forEach(playerData => {
+          createOtherPlayer(playerData);
+        });
+        updatePlayerCount();
+        break;
+
+      case 'player_connect':
+        if (data.playerId !== multiplayer.playerId) {
+          addChatMessage('Sistema', `${data.playerName} entrou no jogo`, true);
+          updatePlayerCount();
+        }
+        break;
+
+      case 'player_disconnect':
+        if (data.playerId !== multiplayer.playerId) {
+          removeOtherPlayer(data.playerId);
+          addChatMessage('Sistema', `${data.playerName} saiu do jogo`, true);
+          updatePlayerCount();
+        }
+        break;
+
+      case 'player_update':
+        if (data.playerId !== multiplayer.playerId) {
+          updateOtherPlayer(data);
+        }
+        break;
+
+      case 'block_place':
+        console.log('📥 Recebendo colocação de bloco:', data.blockType, 'em', data.x, data.y, data.z);
+        if (data.playerId !== multiplayer.playerId) {
+          // Sincronizar colocação de bloco
+          setBlock(data.x, data.y, data.z, data.blockType);
+
+          // Se for água, criar mesh especial
+          if (data.blockType === 'water' && waterSystem) {
+            waterSystem.createWaterBlock(data.x, data.y, data.z);
+          }
+
+          const chunk = worldToChunk(data.x, data.z);
+          const chunksToUpdate = new Set();
+          chunksToUpdate.add(getChunkKey(chunk.x, chunk.z));
+
+          // Atualizar chunks adjacentes
+          const localX = ((data.x % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+          const localZ = ((data.z % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+
+          if (localX === 0) chunksToUpdate.add(getChunkKey(chunk.x - 1, chunk.z));
+          if (localX === CHUNK_SIZE - 1) chunksToUpdate.add(getChunkKey(chunk.x + 1, chunk.z));
+          if (localZ === 0) chunksToUpdate.add(getChunkKey(chunk.x, chunk.z - 1));
+          if (localZ === CHUNK_SIZE - 1) chunksToUpdate.add(getChunkKey(chunk.x, chunk.z + 1));
+
+          chunksToUpdate.forEach(key => {
+            const [cx, cz] = key.split(',').map(Number);
+            if (chunkMeshes[key]) {
+              buildChunkMesh(cx, cz);
+            }
+          });
+        }
+        break;
+
+      case 'block_break':
+        console.log('📥 Recebendo quebra de bloco em:', data.x, data.y, data.z);
+        if (data.playerId !== multiplayer.playerId) {
+          // Sincronizar quebra de bloco
+          const block = getBlock(data.x, data.y, data.z);
+
+          // Remover água se for bloco de água
+          if (block && block.type === 'water' && waterSystem) {
+            waterSystem.removeWater(data.x, data.y, data.z);
+          }
+
+          removeBlockData(data.x, data.y, data.z);
+
+          const chunk = worldToChunk(data.x, data.z);
+          const chunksToUpdate = new Set();
+          chunksToUpdate.add(getChunkKey(chunk.x, chunk.z));
+
+          // Atualizar chunks adjacentes
+          const localX = ((data.x % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+          const localZ = ((data.z % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+
+          if (localX === 0) chunksToUpdate.add(getChunkKey(chunk.x - 1, chunk.z));
+          if (localX === CHUNK_SIZE - 1) chunksToUpdate.add(getChunkKey(chunk.x + 1, chunk.z));
+          if (localZ === 0) chunksToUpdate.add(getChunkKey(chunk.x, chunk.z - 1));
+          if (localZ === CHUNK_SIZE - 1) chunksToUpdate.add(getChunkKey(chunk.x, chunk.z + 1));
+
+          chunksToUpdate.forEach(key => {
+            const [cx, cz] = key.split(',').map(Number);
+            if (chunkMeshes[key]) {
+              buildChunkMesh(cx, cz);
+            }
+          });
+        }
+        break;
+
+      case 'block_break':
+        if (data.playerId !== multiplayer.playerId) {
+          // Sincronizar quebra de bloco
+          removeBlockData(data.x, data.y, data.z);
+          const chunk = worldToChunk(data.x, data.z);
+          buildChunkMesh(chunk.x, chunk.z);
+        }
+        break;
+
+      case 'chat_message':
+        addChatMessage(data.playerName, data.message, false);
+        break;
+
+      case 'player_rename':
+        if (multiplayer.otherPlayers.has(data.playerId)) {
+          multiplayer.otherPlayers.get(data.playerId).name = data.newName;
+        }
+        addChatMessage('Sistema', `${data.oldName} mudou o nome para ${data.newName}`, true);
+        break;
+    }
+  }
+
+  function createOtherPlayer(playerData) {
+    if (multiplayer.otherPlayers.has(playerData.playerId)) return;
+
+    // Criar mesh do jogador (similar ao PlayerCharacter mas simplificado)
+    const group = new THREE.Group();
+
+    // Corpo
+    const bodyGeo = new THREE.BoxGeometry(0.6, 0.9, 0.3);
+    const bodyMat = new THREE.MeshLambertMaterial({ color: 0x4169E1 });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.position.y = 0.5;
+    group.add(body);
+
+    // Cabeça
+    const headGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    const headMat = new THREE.MeshLambertMaterial({ color: 0xFFDBAC });
+    const head = new THREE.Mesh(headGeo, headMat);
+    head.position.y = 1.2;
+    group.add(head);
+
+    // Braços
+    const armGeo = new THREE.BoxGeometry(0.2, 0.8, 0.2);
+    const armMat = new THREE.MeshLambertMaterial({ color: 0x4169E1 });
+
+    const leftArm = new THREE.Mesh(armGeo, armMat);
+    leftArm.position.set(-0.4, 0.4, 0);
+    group.add(leftArm);
+
+    const rightArm = new THREE.Mesh(armGeo, armMat);
+    rightArm.position.set(0.4, 0.4, 0);
+    group.add(rightArm);
+
+    // Pernas
+    const legGeo = new THREE.BoxGeometry(0.25, 0.9, 0.25);
+    const legMat = new THREE.MeshLambertMaterial({ color: 0x2F4F4F });
+
+    const leftLeg = new THREE.Mesh(legGeo, legMat);
+    leftLeg.position.set(-0.15, -0.4, 0);
+    group.add(leftLeg);
+
+    const rightLeg = new THREE.Mesh(legGeo, legMat);
+    rightLeg.position.set(0.15, -0.4, 0);
+    group.add(rightLeg);
+
+    // Nome do jogador acima da cabeça
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(0, 0, 256, 64);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 32px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(playerData.name, 128, 42);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMat = new THREE.SpriteMaterial({ map: texture });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.scale.set(2, 0.5, 1);
+    sprite.position.y = 2;
+    group.add(sprite);
+
+    // Posicionar
+    group.position.set(
+            playerData.position.x,
+            playerData.position.y,
+            playerData.position.z
+    );
+
+    scene.add(group);
+
+    multiplayer.otherPlayers.set(playerData.playerId, {
+      id: playerData.playerId,
+      name: playerData.name,
+      mesh: group,
+      position: playerData.position,
+      rotation: playerData.rotation
+    });
+  }
+
+  function updateOtherPlayer(data) {
+    if (!multiplayer.otherPlayers.has(data.playerId)) {
+      createOtherPlayer({
+        playerId: data.playerId,
+        name: `Jogador_${data.playerId}`,
+        position: data.position,
+        rotation: data.rotation
+      });
+      return;
+    }
+
+    const player = multiplayer.otherPlayers.get(data.playerId);
+
+    if (player.mesh) {
+      // Interpolação suave de posição
+      player.mesh.position.lerp(
+              new THREE.Vector3(data.position.x, data.position.y, data.position.z),
+              0.3
+      );
+
+      // Rotação
+      if (data.rotation) {
+        player.mesh.rotation.y = data.rotation.y;
+      }
+    }
+
+    player.position = data.position;
+    player.rotation = data.rotation;
+  }
+
+  function removeOtherPlayer(playerId) {
+    if (multiplayer.otherPlayers.has(playerId)) {
+      const player = multiplayer.otherPlayers.get(playerId);
+      if (player.mesh) {
+        scene.remove(player.mesh);
+        player.mesh.traverse(child => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) child.material.dispose();
+        });
+      }
+      multiplayer.otherPlayers.delete(playerId);
+    }
+  }
+
+  function updatePlayerCount() {
+    const count = multiplayer.otherPlayers.size;
+    document.getElementById('mp-players-count').textContent = count;
+  }
+
+  // Sincronizar posição do jogador
+  function syncPlayerPosition() {
+    if (!multiplayer.connected) return;
+
+    const now = Date.now();
+    if (now - multiplayer.lastPositionSent < multiplayer.positionUpdateInterval) return;
+
+    sendMultiplayerMessage({
+      type: 'player_update',
+      position: {
+        x: camera.position.x,
+        y: camera.position.y,
+        z: camera.position.z
+      },
+      rotation: {
+        x: mouse.x,
+        y: mouse.y
+      },
+      health: playerHealth
+    });
+
+    multiplayer.lastPositionSent = now;
+  }
+
+  // Sistema de Chat
+  function openChat() {
+    const chat = document.getElementById('multiplayer-chat');
+    chat.classList.add('open');
+    document.getElementById('chat-input').focus();
+  }
+
+  function closeChat() {
+    document.getElementById('multiplayer-chat').classList.remove('open');
+    document.getElementById('chat-input').value = '';
+  }
+
+  function sendChatMessage(message) {
+    if (!message || !message.trim()) return;
+
+    if (multiplayer.connected) {
+      sendMultiplayerMessage({
+        type: 'chat_message',
+        message: message.trim()
+      });
+    }
+
+    document.getElementById('chat-input').value = '';
+  }
+
+  function addChatMessage(playerName, message, isSystem = false) {
+    const chatMessages = document.getElementById('chat-messages');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = isSystem ? 'chat-msg chat-system' : 'chat-msg chat-player';
+
+    const time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    if (isSystem) {
+      msgDiv.innerHTML = `
+      <span class="chat-time">${time}</span>
+      <span class="chat-text-system">${message}</span>
+    `;
+    } else {
+      msgDiv.innerHTML = `
+      <span class="chat-time">${time}</span>
+      <span class="chat-player">${playerName}:</span>
+      <span class="chat-text">${message}</span>
+    `;
+    }
+
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Limitar mensagens
+    if (chatMessages.children.length > 50) {
+      chatMessages.removeChild(chatMessages.firstChild);
+    }
+  }
+
+  // Teclas do chat
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyT' && multiplayer.connected && !document.getElementById('multiplayer-chat').classList.contains('open')) {
+      e.preventDefault();
+      openChat();
+    }
+
+    if (e.code === 'Escape' && document.getElementById('multiplayer-chat').classList.contains('open')) {
+      closeChat();
+    }
+  });
+
+  // Enter para enviar mensagem
+  document.getElementById('chat-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      sendChatMessage(e.target.value);
+    }
+  });
+
+
   function init() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87CEEB);
@@ -5647,6 +7940,16 @@
     createInventoryUI();
     createFullInventoryUI();
     setupEventListeners();
+
+
+    addVolumetricLighting();
+
+// Melhorar configurações de iluminação do renderer
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+
   }
 
 
@@ -6281,9 +8584,28 @@
     if (selectedItem === type && removeFromInventory(player.selectedSlot, 1)) {
       setBlock(x, y, z, type);
 
+      // ✨ ILUMINAÇÃO: Adicionar luz se o bloco for emissivo
+      if (blockTypes[type] && blockTypes[type].emissive) {
+        addBlockLight(x, y, z, type);
+      }
+
       // Se for água, criar mesh especial
       if (type === 'water') {
         waterSystem.createWaterBlock(x, y, z);
+        // Adicionar iluminação suave para água
+        addWaterLighting(x, y, z);
+      }
+
+      // ✅ SINCRONIZAR MULTIPLAYER
+      if (multiplayer.connected) {
+        console.log('📤 Sincronizando colocação de bloco:', type, 'em', x, y, z);
+        sendMultiplayerMessage({
+          type: 'block_place',
+          x: Math.floor(x),
+          y: Math.floor(y),
+          z: Math.floor(z),
+          blockType: type
+        });
       }
 
       // Reconstruir chunks afetados
@@ -6309,7 +8631,6 @@
       updateFaceCount();
     }
   }
-  // ADICIONAR esta função
   function buildImprovedChurch(x, y, z) {
     // Base maior e mais elaborada (9x14)
     for (let dx = -4; dx <= 4; dx++) {
@@ -7231,77 +9552,10 @@
     animate();
   }
 
-  function animate() {
-    requestAnimationFrame(animate);
 
-    const deltaTime = 0.016; // Aproximadamente 60 FPS
-
-    if (controls.locked && !document.getElementById('inventory-full').classList.contains('open')) {
-      updatePlayer();
-      updateBreaking();
-
-      // Atualizar animação do personagem
-      if (playerCharacter) {
-        const isMoving = keys['KeyW'] || keys['KeyA'] || keys['KeyS'] || keys['KeyD'];
-        const isJumping = !player.canJump;
-        playerCharacter.updateAnimation(deltaTime, isMoving, isJumping);
-
-        // Sincronizar posição do personagem com a câmera
-        playerCharacter.setPosition(
-                camera.position.x,
-                camera.position.y - 1.6,
-                camera.position.z
-        );
-        playerCharacter.setRotation(camera.rotation.y);
-      }
-    }
-
-    // Atualizar sistemas
-    if (waterSystem) waterSystem.updateWaves(performance.now() * 0.001);
-    if (particleSystem) particleSystem.update();
-    updateDayNightCycle(deltaTime);
-
-    updateBreakAnimations();
-    updateAnimals();
-    updateEnemies();
-    updateVillagers();
-
-    renderer.render(scene, camera);
-
-    frames++;
-    const now = performance.now();
-
-    if (now - lastFaceUpdate > 2000) {
-      updateFaceCount();
-      lastFaceUpdate = now;
-    }
-
-    if (now >= lastTime + 1000) {
-      const fps = Math.round(frames * 1000 / (now - lastTime));
-      document.getElementById('fps').textContent = fps;
-      document.getElementById('fps').className = fps >= 50 ? 'performance-good' : fps >= 30 ? 'performance-ok' : 'performance-bad';
-
-      document.getElementById('pos').textContent =
-              `${Math.floor(camera.position.x)}, ${Math.floor(camera.position.y)}, ${Math.floor(camera.position.z)}`;
-      document.getElementById('chunks').textContent = Object.keys(chunks).length;
-      document.getElementById('total').textContent = Object.keys(worldData).length;
-      document.getElementById('animals-count').textContent = `${animals.length} | I:${enemies.length} | A:${villagers.length}`;
-
-      frames = 0;
-      lastTime = now;
-    }
-  }
-
-  // ============================================
-  // ATUALIZAR BLOCKTYPES PARA INCLUIR ÁGUA
-  // ============================================
-
-  // Adicionar água aos blockTypes existentes
   blockTypes.water = { color: 0x1E90FF, name: 'Água', hardness: 0.5 };
 
-  // ============================================
-  // OTIMIZAÇÃO DE MEMÓRIA
-  // ============================================
+
 
   function cleanupUnusedResources() {
     // Limpar geometrias não utilizadas
@@ -7601,6 +9855,1826 @@
     }
     lastTouchEnd = now;
   }, false);
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuContainer = document.querySelector('.menu-container');
+    if (menuContainer) {
+      const settingsBtn = document.createElement('button');
+      settingsBtn.className = 'menu-settings-btn';
+      settingsBtn.innerHTML = '⚙️ Configurações';
+      settingsBtn.onclick = openSettings;
+      menuContainer.appendChild(settingsBtn);
+    }
+  });
+
+
+
+  // ============================================
+  // SISTEMA DE CONFIGURAÇÕES
+  // ============================================
+
+  const gameSettings = {
+    graphics: {
+      renderDistance: 6,
+      antialiasing: false,
+      shadows: true,
+      fog: true,
+      particles: 'all',
+      fpsLimit: 'unlimited'
+    },
+    gameplay: {
+      difficulty: 'normal',
+      creative: false,
+      autoJump: false,
+      mobSpawn: 50,
+      healthRegen: 5
+    },
+    controls: {
+      mouseSensitivity: 10,
+      invertY: false,
+      touchSensitivity: 10
+    },
+    audio: {
+      masterVolume: 70,
+      sfxVolume: 80,
+      musicVolume: 50,
+      ambientVolume: 60
+    }
+  };
+
+  // Carregar configurações salvas
+  function loadSettings() {
+    const saved = localStorage.getItem('minecraftSettings');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        Object.assign(gameSettings, parsed);
+        applySettings();
+        updateSettingsUI();
+      } catch (e) {
+        console.error('Erro ao carregar configurações:', e);
+      }
+    }
+  }
+
+  // Salvar configurações
+  function saveSettings() {
+    localStorage.setItem('minecraftSettings', JSON.stringify(gameSettings));
+    applySettings();
+    showNotification('✅ Configurações salvas com sucesso!', 'success');
+  }
+
+  // Restaurar padrão
+  function resetSettings() {
+    if (confirm('Deseja restaurar todas as configurações para o padrão?')) {
+      localStorage.removeItem('minecraftSettings');
+      location.reload();
+    }
+  }
+
+  // Aplicar configurações ao jogo
+  function applySettings() {
+    // Gráficos
+    if (gameSettings.graphics.shadows) {
+      renderer.shadowMap.enabled = true;
+    } else {
+      renderer.shadowMap.enabled = false;
+    }
+
+    if (gameSettings.graphics.fog) {
+      scene.fog = new THREE.Fog(0x87CEEB, 60, 120);
+    } else {
+      scene.fog = null;
+    }
+
+    // Distância de renderização
+    if (typeof RENDER_DISTANCE !== 'undefined') {
+      // Atualizar chunks se mudou
+      const newDistance = parseInt(gameSettings.graphics.renderDistance);
+      if (newDistance !== RENDER_DISTANCE) {
+        // Recarregar chunks
+        updateVisibleChunks();
+      }
+    }
+
+    // Dificuldade
+    switch(gameSettings.gameplay.difficulty) {
+      case 'peaceful':
+        // Remover todos os inimigos
+        enemies.forEach(e => e.remove());
+        enemies = [];
+        break;
+      case 'easy':
+        // Reduzir dano
+        enemyTypes.zombie.damage = 2;
+        enemyTypes.skeleton.damage = 1;
+        break;
+      case 'normal':
+        // Dano padrão
+        enemyTypes.zombie.damage = 3;
+        enemyTypes.skeleton.damage = 2;
+        break;
+      case 'hard':
+        // Aumentar dano
+        enemyTypes.zombie.damage = 5;
+        enemyTypes.skeleton.damage = 4;
+        break;
+    }
+
+    // Modo criativo
+    if (gameSettings.gameplay.creative) {
+      player.flying = true;
+      playerHealth = MAX_HEALTH;
+      // Dar itens ilimitados
+      for (let type in blockTypes) {
+        addToInventory(type, 64);
+      }
+    }
+  }
+
+  // Atualizar interface de configurações
+  function updateSettingsUI() {
+    // Gráficos
+    document.getElementById('render-distance').value = gameSettings.graphics.renderDistance;
+    document.getElementById('render-distance-value').textContent = gameSettings.graphics.renderDistance;
+
+    updateSwitchState('antialiasing', gameSettings.graphics.antialiasing);
+    updateSwitchState('shadows', gameSettings.graphics.shadows);
+    updateSwitchState('fog', gameSettings.graphics.fog);
+
+    document.getElementById('particles-select').value = gameSettings.graphics.particles;
+    document.getElementById('fps-select').value = gameSettings.graphics.fpsLimit;
+
+    // Gameplay
+    document.getElementById('difficulty-select').value = gameSettings.gameplay.difficulty;
+    updateSwitchState('creative', gameSettings.gameplay.creative);
+    updateSwitchState('autojump', gameSettings.gameplay.autoJump);
+
+    document.getElementById('mob-spawn').value = gameSettings.gameplay.mobSpawn;
+    document.getElementById('mob-spawn-value').textContent = gameSettings.gameplay.mobSpawn + '%';
+
+    document.getElementById('health-regen').value = gameSettings.gameplay.healthRegen;
+    document.getElementById('health-regen-value').textContent = gameSettings.gameplay.healthRegen;
+
+    // Controles
+    document.getElementById('mouse-sensitivity').value = gameSettings.controls.mouseSensitivity;
+    document.getElementById('mouse-sensitivity-value').textContent = gameSettings.controls.mouseSensitivity;
+
+    updateSwitchState('invertY', gameSettings.controls.invertY);
+
+    document.getElementById('touch-sensitivity').value = gameSettings.controls.touchSensitivity;
+    document.getElementById('touch-sensitivity-value').textContent = gameSettings.controls.touchSensitivity;
+
+    // Áudio
+    document.getElementById('master-volume').value = gameSettings.audio.masterVolume;
+    document.getElementById('master-volume-value').textContent = gameSettings.audio.masterVolume + '%';
+
+    document.getElementById('sfx-volume').value = gameSettings.audio.sfxVolume;
+    document.getElementById('sfx-volume-value').textContent = gameSettings.audio.sfxVolume + '%';
+
+    document.getElementById('music-volume').value = gameSettings.audio.musicVolume;
+    document.getElementById('music-volume-value').textContent = gameSettings.audio.musicVolume + '%';
+
+    document.getElementById('ambient-volume').value = gameSettings.audio.ambientVolume;
+    document.getElementById('ambient-volume-value').textContent = gameSettings.audio.ambientVolume + '%';
+  }
+
+  // Atualizar estado do switch
+  function updateSwitchState(id, active) {
+    const switchEl = document.getElementById(id + '-switch');
+    if (switchEl) {
+      if (active) {
+        switchEl.classList.add('active');
+      } else {
+        switchEl.classList.remove('active');
+      }
+    }
+  }
+
+  // Atualizar configuração
+  function updateSetting(key, value) {
+    const parts = key.split('.');
+    if (parts.length === 1) {
+      // Encontrar categoria
+      for (let category in gameSettings) {
+        if (gameSettings[category].hasOwnProperty(key)) {
+          gameSettings[category][key] = value;
+          break;
+        }
+      }
+    }
+
+    // Atualizar valores exibidos
+    const valueEl = document.getElementById(key.toLowerCase().replace(/([A-Z])/g, '-$1') + '-value');
+    if (valueEl) {
+      if (key.includes('Volume') || key.includes('Spawn')) {
+        valueEl.textContent = value + '%';
+      } else {
+        valueEl.textContent = value;
+      }
+    }
+
+    // Aplicar em tempo real
+    applySettings();
+  }
+
+  // Toggle switch
+  function toggleSwitch(id) {
+    const switchEl = document.getElementById(id + '-switch');
+    const isActive = switchEl.classList.contains('active');
+
+    if (isActive) {
+      switchEl.classList.remove('active');
+    } else {
+      switchEl.classList.add('active');
+    }
+
+    // Atualizar configuração
+    for (let category in gameSettings) {
+      if (gameSettings[category].hasOwnProperty(id)) {
+        gameSettings[category][id] = !isActive;
+        break;
+      }
+    }
+
+    applySettings();
+  }
+
+  // Trocar tab
+  function switchTab(tabName) {
+    // Desativar todas as tabs
+    document.querySelectorAll('.settings-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    document.querySelectorAll('.settings-content').forEach(content => {
+      content.classList.remove('active');
+    });
+
+    // Ativar tab selecionada
+    event.target.classList.add('active');
+    document.getElementById('tab-' + tabName).classList.add('active');
+  }
+
+  // Abrir configurações
+  function openSettings() {
+    document.getElementById('settings-menu').classList.add('open');
+    updateSettingsUI();
+    updateStatsDisplay();
+
+    // Atualizar stats periodicamente
+    if (!window.statsInterval) {
+      window.statsInterval = setInterval(updateStatsDisplay, 1000);
+    }
+  }
+
+  // Fechar configurações
+  function closeSettings() {
+    document.getElementById('settings-menu').classList.remove('open');
+
+    if (window.statsInterval) {
+      clearInterval(window.statsInterval);
+      window.statsInterval = null;
+    }
+  }
+
+  // Atualizar exibição de estatísticas
+  function updateStatsDisplay() {
+    const fps = parseInt(document.getElementById('fps').textContent) || 60;
+    document.getElementById('stat-fps').textContent = fps;
+
+    const chunks = Object.keys(chunks).length;
+    document.getElementById('stat-chunks').textContent = chunks;
+
+    const totalEntities = animals.length + enemies.length + villagers.length;
+    document.getElementById('stat-entities').textContent = totalEntities;
+
+    if (performance.memory) {
+      const memoryMB = (performance.memory.usedJSHeapSize / 1048576).toFixed(0);
+      document.getElementById('stat-memory').textContent = memoryMB + 'MB';
+    }
+  }
+
+  // Exportar dados do jogo
+  function exportGameData() {
+    const data = {
+      world: worldData,
+      player: {
+        position: {
+          x: camera.position.x,
+          y: camera.position.y,
+          z: camera.position.z
+        },
+        inventory: player.inventory,
+        health: playerHealth
+      },
+      settings: gameSettings,
+      timestamp: Date.now()
+    };
+
+    const json = JSON.stringify(data);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `minecraft-world-${Date.now()}.json`;
+    a.click();
+
+    showNotification('✅ Mundo exportado com sucesso!', 'success');
+  }
+
+  // Importar dados do jogo
+  function importGameData() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+
+          if (confirm('Importar este mundo irá substituir o mundo atual. Continuar?')) {
+            worldData = data.world;
+            player.inventory = data.player.inventory;
+            playerHealth = data.player.health;
+
+            camera.position.set(
+                    data.player.position.x,
+                    data.player.position.y,
+                    data.player.position.z
+            );
+
+            if (data.settings) {
+              Object.assign(gameSettings, data.settings);
+            }
+
+            // Recarregar chunks
+            chunks = {};
+            chunkMeshes = {};
+            updateVisibleChunks();
+
+            showNotification('✅ Mundo importado com sucesso!', 'success');
+            closeSettings();
+          }
+        } catch (e) {
+          showNotification('❌ Erro ao importar mundo: ' + e.message, 'error');
+        }
+      };
+
+      reader.readAsText(file);
+    };
+
+    input.click();
+  }
+
+  // Limpar dados do jogo
+  function resetGameData() {
+    if (confirm('ATENÇÃO: Isto irá apagar TODO o progresso do jogo! Continuar?')) {
+      if (confirm('Tem certeza absoluta? Esta ação não pode ser desfeita!')) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+  }
+
+  // Sistema de notificações
+  function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 10000;
+    animation: slideIn 0.3s ease;
+  `;
+    notification.textContent = message;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  // Adicionar animações de slide
+  const style = document.createElement('style');
+  style.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(400px); opacity: 0; }
+  }
+`;
+  document.head.appendChild(style);
+
+  // Carregar configurações ao iniciar
+  loadSettings();
+
+  // Atalho de teclado para abrir configurações (ESC)
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && controls.locked) {
+      openSettings();
+      document.exitPointerLock();
+      controls.locked = false;
+    }
+  });
+
+
+  // Adicionar após a declaração da câmera (próximo à linha onde camera é criada)
+  const frustum = new THREE.Frustum();
+  const cameraViewProjectionMatrix = new THREE.Matrix4();
+
+  // MODIFICAR a função updateVisibleChunks
+  function updateVisibleChunks() {
+    const px = camera.position.x;
+    const pz = camera.position.z;
+    const chunk = worldToChunk(px, pz);
+
+    // Atualizar frustum da câmera
+    camera.updateMatrixWorld();
+    cameraViewProjectionMatrix.multiplyMatrices(
+            camera.projectionMatrix,
+            camera.matrixWorldInverse
+    );
+    frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
+
+    const chunksToGenerate = [];
+    const chunksToMesh = [];
+
+    for (let cx = chunk.x - RENDER_DISTANCE; cx <= chunk.x + RENDER_DISTANCE; cx++) {
+      for (let cz = chunk.z - RENDER_DISTANCE; cz <= chunk.z + RENDER_DISTANCE; cz++) {
+        const chunkKey = getChunkKey(cx, cz);
+
+        // Verificar se o chunk está dentro do frustum
+        if (!isChunkInFrustum(cx, cz)) {
+          continue;
+        }
+
+        if (!chunks[chunkKey]) {
+          chunksToGenerate.push([cx, cz]);
+        } else if (!chunkMeshes[chunkKey]) {
+          chunksToMesh.push([cx, cz]);
+        }
+      }
+    }
+
+    chunksToGenerate.forEach(([cx, cz]) => {
+      generateChunk(cx, cz);
+      spawnAnimals(cx, cz);
+      spawnEnemies(cx, cz);
+    });
+
+    chunksToMesh.forEach(([cx, cz]) => buildChunkMesh(cx, cz));
+
+    const chunksToRemove = [];
+    for (let key in chunkMeshes) {
+      const [cx, cz] = key.split(',').map(Number);
+      const dx = Math.abs(cx - chunk.x);
+      const dz = Math.abs(cz - chunk.z);
+
+      if (dx > RENDER_DISTANCE || dz > RENDER_DISTANCE) {
+        chunksToRemove.push(key);
+      }
+    }
+
+    chunksToRemove.forEach(key => {
+      const [cx, cz] = key.split(',').map(Number);
+      scene.remove(chunkMeshes[key]);
+      chunkMeshes[key].children.forEach(child => {
+        child.geometry.dispose();
+      });
+      delete chunkMeshes[key];
+      removeAnimalsInChunk(cx, cz);
+      removeEnemiesInChunk(cx, cz);
+    });
+
+    updateFaceCount();
+  }
+
+  // ADICIONAR nova função para verificar se chunk está no frustum
+  function isChunkInFrustum(cx, cz) {
+    const sx = cx * CHUNK_SIZE;
+    const sz = cz * CHUNK_SIZE;
+
+    // Criar bounding box do chunk
+    const chunkBox = new THREE.Box3(
+            new THREE.Vector3(sx, 0, sz),
+            new THREE.Vector3(sx + CHUNK_SIZE, 50, sz + CHUNK_SIZE)
+    );
+
+    return frustum.intersectsBox(chunkBox);
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    const deltaTime = 0.016;
+
+    if (controls.locked && !document.getElementById('inventory-full').classList.contains('open')) {
+      updatePlayer();
+      updateBreaking();
+
+      // ✅ ADICIONAR AQUI - Sincronização Multiplayer
+      if (multiplayer.connected) {
+        syncPlayerPosition();
+      }
+
+      if (playerCharacter) {
+        const isMoving = keys['KeyW'] || keys['KeyA'] || keys['KeyS'] || keys['KeyD'];
+        const isJumping = !player.canJump;
+        const isRunning = keys['ShiftLeft'] && isMoving;
+
+        playerCharacter.updateAnimation(deltaTime, isMoving, isJumping, isRunning);
+
+        playerCharacter.setPosition(
+                camera.position.x,
+                camera.position.y - 1.6,
+                camera.position.z
+        );
+        playerCharacter.setRotation(camera.rotation.y);
+      }
+    }
+
+    // Atualizar frustum da câmera
+    camera.updateMatrixWorld();
+    cameraViewProjectionMatrix.multiplyMatrices(
+            camera.projectionMatrix,
+            camera.matrixWorldInverse
+    );
+    frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
+
+    // Frustum culling - ocultar chunks fora da visão
+    for (let key in chunkMeshes) {
+      const [cx, cz] = key.split(',').map(Number);
+      const mesh = chunkMeshes[key];
+
+      if (mesh) {
+        mesh.visible = isChunkInFrustum(cx, cz);
+      }
+    }
+
+    // Atualizar sistemas
+    if (waterSystem) waterSystem.updateWaves(performance.now() * 0.001);
+    if (particleSystem) particleSystem.update();
+    updateDayNightCycle(deltaTime);
+
+    updateBreakAnimations();
+    updateAnimals();
+    updateEnemies();
+    updateVillagers();
+
+    renderer.render(scene, camera);
+
+    frames++;
+    const now = performance.now();
+
+    if (now - lastFaceUpdate > 2000) {
+      updateFaceCount();
+      lastFaceUpdate = now;
+    }
+
+    if (now >= lastTime + 1000) {
+      const fps = Math.round(frames * 1000 / (now - lastTime));
+      document.getElementById('fps').textContent = fps;
+      document.getElementById('fps').className = fps >= 50 ? 'performance-good' : fps >= 30 ? 'performance-ok' : 'performance-bad';
+
+      document.getElementById('pos').textContent =
+              `${Math.floor(camera.position.x)}, ${Math.floor(camera.position.y)}, ${Math.floor(camera.position.z)}`;
+      document.getElementById('chunks').textContent = Object.keys(chunks).length;
+      document.getElementById('total').textContent = Object.keys(worldData).length;
+      document.getElementById('animals-count').textContent = `${animals.length} | I:${enemies.length} | A:${villagers.length}`;
+
+      frames = 0;
+      lastTime = now;
+    }
+  }
+
+  function openMultiplayerMenu() {
+    document.getElementById('multiplayer-menu').classList.add('open');
+    updateMultiplayerMenuStatus();
+  }
+
+  function closeMultiplayerMenu() {
+    document.getElementById('multiplayer-menu').classList.remove('open');
+  }
+
+  function toggleMultiplayerConnection() {
+    if (multiplayer.connected) {
+      disconnectMultiplayer();
+    } else {
+      const serverUrl = document.getElementById('mp-server-url').value;
+      const playerName = document.getElementById('mp-player-name').value;
+
+      multiplayer.serverUrl = serverUrl;
+      multiplayer.enabled = true;
+
+      connectMultiplayer();
+
+      if (playerName) {
+        setTimeout(() => {
+          sendMultiplayerMessage({
+            type: 'set_name',
+            name: playerName
+          });
+        }, 1000);
+      }
+    }
+
+    updateMultiplayerMenuStatus();
+  }
+
+  function updateMultiplayerMenuStatus() {
+    const btn = document.getElementById('mp-connect-btn');
+    const status = document.getElementById('mp-connection-status');
+    const indicator = document.getElementById('mp-indicator');
+
+    if (multiplayer.connected) {
+      btn.textContent = 'Desconectar';
+      btn.classList.remove('danger');
+      status.textContent = 'Conectado ao servidor';
+      indicator.className = 'mp-status-indicator online';
+      document.getElementById('multiplayer-status').classList.remove('hidden');
+    } else {
+      btn.textContent = 'Conectar';
+      btn.classList.add('mp-button');
+      status.textContent = 'Não conectado';
+      indicator.className = 'mp-status-indicator offline';
+      document.getElementById('multiplayer-status').classList.add('hidden');
+    }
+  }
+
+  // Adicionar botão de multiplayer ao menu principal
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuContainer = document.querySelector('.menu-container');
+    if (menuContainer) {
+      const mpBtn = document.createElement('button');
+      mpBtn.className = 'start-button';
+      mpBtn.style.background = 'linear-gradient(135deg, #2196F3, #1565C0)';
+      mpBtn.innerHTML = '🌐 MULTIPLAYER';
+      mpBtn.onclick = openMultiplayerMenu;
+
+      const startBtn = document.querySelector('.start-button');
+      if (startBtn) {
+        startBtn.parentNode.insertBefore(mpBtn, startBtn.nextSibling);
+      }
+    }
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // ============================================
+  // SISTEMA DE TEXTURAS ULTRA-REALISTAS
+  // ============================================
+
+  // Função auxiliar: Ruído Perlin simplificado
+  function perlinNoise(x, y) {
+    const X = Math.floor(x) & 255;
+    const Y = Math.floor(y) & 255;
+    x -= Math.floor(x);
+    y -= Math.floor(y);
+    const u = fade(x);
+    const v = fade(y);
+    const hash = (X * 57 + Y * 113) % 256;
+    return lerp(v, lerp(u, grad(hash, x, y), grad(hash + 1, x - 1, y)),
+            lerp(u, grad(hash + 1, x, y - 1), grad(hash + 2, x - 1, y - 1)));
+  }
+
+  function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+  function lerp(t, a, b) { return a + t * (b - a); }
+  function grad(hash, x, y) {
+    const h = hash & 3;
+    return ((h & 1) === 0 ? x : -x) + ((h & 2) === 0 ? y : -y);
+  }
+
+  // Função auxiliar: Ruído fractal (múltiplas oitavas)
+  function fractalNoise(x, y, octaves = 4) {
+    let total = 0;
+    let frequency = 1;
+    let amplitude = 1;
+    let maxValue = 0;
+
+    for (let i = 0; i < octaves; i++) {
+      total += perlinNoise(x * frequency, y * frequency) * amplitude;
+      maxValue += amplitude;
+      amplitude *= 0.5;
+      frequency *= 2;
+    }
+
+    return total / maxValue;
+  }
+
+  // Função auxiliar: Simular iluminação direcional
+  function applyLighting(ctx, x, y, width, height, intensity = 0.3) {
+    const gradient = ctx.createRadialGradient(
+            x + width * 0.3, y + height * 0.3, 0,
+            x + width * 0.5, y + height * 0.5, width
+    );
+    gradient.addColorStop(0, `rgba(255, 255, 255, ${intensity})`);
+    gradient.addColorStop(0.5, `rgba(255, 255, 255, ${intensity * 0.3})`);
+    gradient.addColorStop(1, `rgba(0, 0, 0, ${intensity * 0.2})`);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(x, y, width, height);
+  }
+
+  // ============================================
+  // TEXTURAS ULTRA-REALISTAS
+  // ============================================
+
+  function createUltraRealisticGrassTexture(ctx, size) {
+    // Base com gradiente complexo
+    const bgGradient = ctx.createLinearGradient(0, 0, size, size);
+    bgGradient.addColorStop(0, '#6FB849');
+    bgGradient.addColorStop(0.2, '#7CFC00');
+    bgGradient.addColorStop(0.5, '#6BCD00');
+    bgGradient.addColorStop(0.7, '#5AB000');
+    bgGradient.addColorStop(1, '#4A9000');
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Camada de ruído Perlin para variação natural
+    const imageData = ctx.getImageData(0, 0, size, size);
+    const data = imageData.data;
+
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const i = (y * size + x) * 4;
+        const noise = fractalNoise(x * 0.1, y * 0.1, 5);
+        const factor = 0.7 + noise * 0.3;
+
+        data[i] = Math.floor(data[i] * factor);
+        data[i + 1] = Math.floor(data[i + 1] * factor);
+        data[i + 2] = Math.floor(data[i + 2] * factor);
+      }
+    }
+    ctx.putImageData(imageData, 0, 0);
+
+    // Fibras de grama individuais (alta densidade)
+    for (let i = 0; i < 200; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const height = 3 + Math.random() * 5;
+      const angle = Math.random() * Math.PI / 6 - Math.PI / 12;
+      const thickness = 0.3 + Math.random() * 0.5;
+      const shade = Math.random() * 60 - 30;
+      const alpha = 0.3 + Math.random() * 0.4;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      // Haste da grama com gradiente
+      const grassGrad = ctx.createLinearGradient(0, 0, 0, -height);
+      grassGrad.addColorStop(0, `rgba(${60 + shade}, ${120 + shade}, ${20 + shade}, ${alpha})`);
+      grassGrad.addColorStop(0.5, `rgba(${80 + shade}, ${180 + shade}, ${30 + shade}, ${alpha})`);
+      grassGrad.addColorStop(1, `rgba(${100 + shade}, ${220 + shade}, ${40 + shade}, ${alpha * 0.7})`);
+
+      ctx.strokeStyle = grassGrad;
+      ctx.lineWidth = thickness;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(
+              Math.random() * 2 - 1, -height * 0.5,
+              Math.random() * 2 - 1, -height
+      );
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // Manchas de terra/musgo
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 2 + Math.random() * 6;
+      const shade = Math.random() * 40 - 20;
+
+      const dirtGrad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      dirtGrad.addColorStop(0, `rgba(${90 + shade}, ${70 + shade}, ${30 + shade}, 0.6)`);
+      dirtGrad.addColorStop(0.5, `rgba(${70 + shade}, ${50 + shade}, ${20 + shade}, 0.4)`);
+      dirtGrad.addColorStop(1, `rgba(${70 + shade}, ${50 + shade}, ${20 + shade}, 0)`);
+      ctx.fillStyle = dirtGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Orvalho/gotículas de água
+    for (let i = 0; i < 30; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const r = 0.5 + Math.random() * 1.5;
+
+      // Gotícula com reflexo
+      const dropGrad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 0, x, y, r);
+      dropGrad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+      dropGrad.addColorStop(0.4, 'rgba(200, 230, 255, 0.6)');
+      dropGrad.addColorStop(1, 'rgba(150, 200, 230, 0.3)');
+      ctx.fillStyle = dropGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Brilho especular
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.beginPath();
+      ctx.arc(x - r * 0.4, y - r * 0.4, r * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Sombras de grama (ambient occlusion)
+    ctx.fillStyle = 'rgba(0, 30, 0, 0.1)';
+    for (let i = 0; i < 50; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      ctx.fillRect(x, y, 2, 2);
+    }
+
+    // Iluminação geral
+    applyLighting(ctx, 0, 0, size, size, 0.15);
+  }
+
+  function createUltraRealisticDirtTexture(ctx, size) {
+    // Base com gradiente complexo
+    const bgGradient = ctx.createRadialGradient(size * 0.5, size * 0.5, 0, size * 0.5, size * 0.5, size * 0.8);
+    bgGradient.addColorStop(0, '#9B6B3F');
+    bgGradient.addColorStop(0.5, '#8B4513');
+    bgGradient.addColorStop(1, '#6B3410');
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Ruído Perlin para textura base
+    const imageData = ctx.getImageData(0, 0, size, size);
+    const data = imageData.data;
+
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const i = (y * size + x) * 4;
+        const noise1 = fractalNoise(x * 0.08, y * 0.08, 4);
+        const noise2 = fractalNoise(x * 0.15, y * 0.15, 3);
+        const factor = 0.6 + noise1 * 0.3 + noise2 * 0.1;
+
+        data[i] = Math.floor(data[i] * factor);
+        data[i + 1] = Math.floor(data[i + 1] * factor);
+        data[i + 2] = Math.floor(data[i + 2] * factor);
+      }
+    }
+    ctx.putImageData(imageData, 0, 0);
+
+    // Agregados de terra (torrões)
+    for (let i = 0; i < 40; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 3 + Math.random() * 8;
+      const shade = Math.random() * 50 - 25;
+      const segments = 6 + Math.floor(Math.random() * 6);
+
+      ctx.fillStyle = `rgba(${120 + shade}, ${80 + shade}, ${40 + shade}, ${0.5 + Math.random() * 0.3})`;
+      ctx.beginPath();
+
+      for (let j = 0; j <= segments; j++) {
+        const angle = (j / segments) * Math.PI * 2;
+        const r = radius * (0.8 + Math.random() * 0.4);
+        const px = x + Math.cos(angle) * r;
+        const py = y + Math.sin(angle) * r;
+
+        if (j === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      // Sombra do torrão
+      ctx.fillStyle = 'rgba(40, 25, 10, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(x + 1, y + 2, radius * 0.8, radius * 0.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Pedrinhas e cascalho
+    for (let i = 0; i < 80; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const w = 1 + Math.random() * 4;
+      const h = 1 + Math.random() * 3;
+      const shade = Math.random() * 60;
+
+      // Pedrinha com forma irregular
+      ctx.fillStyle = `rgba(${100 + shade}, ${100 + shade}, ${100 + shade}, ${0.6 + Math.random() * 0.3})`;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(Math.random() * Math.PI);
+      ctx.fillRect(-w/2, -h/2, w, h);
+
+      // Brilho na pedrinha
+      ctx.fillStyle = 'rgba(200, 200, 200, 0.4)';
+      ctx.fillRect(-w/2, -h/2, w * 0.4, h * 0.4);
+
+      // Sombra
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.fillRect(w/4, h/4, w * 0.4, h * 0.4);
+
+      ctx.restore();
+    }
+
+    // Raízes e material orgânico
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const length = 10 + Math.random() * 20;
+      const segments = 5 + Math.floor(Math.random() * 5);
+
+      ctx.strokeStyle = `rgba(${50 + Math.random() * 30}, ${30 + Math.random() * 20}, ${10 + Math.random() * 10}, ${0.4 + Math.random() * 0.3})`;
+      ctx.lineWidth = 0.5 + Math.random() * 1.5;
+      ctx.lineCap = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+
+      let currentX = x;
+      let currentY = y;
+
+      for (let j = 0; j < segments; j++) {
+        currentX += (Math.random() - 0.5) * 8;
+        currentY += (Math.random() - 0.5) * 8;
+        ctx.lineTo(currentX, currentY);
+      }
+      ctx.stroke();
+    }
+
+    // Manchas de umidade
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 4 + Math.random() * 10;
+
+      const wetGrad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      wetGrad.addColorStop(0, 'rgba(60, 40, 20, 0.5)');
+      wetGrad.addColorStop(0.5, 'rgba(70, 50, 25, 0.3)');
+      wetGrad.addColorStop(1, 'rgba(80, 60, 30, 0)');
+      ctx.fillStyle = wetGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Textura micro-detalhada
+    for (let i = 0; i < size * 3; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const shade = Math.random() * 40 - 20;
+      ctx.fillStyle = `rgba(${100 + shade}, ${70 + shade}, ${40 + shade}, 0.2)`;
+      ctx.fillRect(x, y, 1, 1);
+    }
+
+    // Iluminação direcional
+    applyLighting(ctx, 0, 0, size, size, 0.2);
+  }
+
+  function createUltraRealisticStoneTexture(ctx, size) {
+    // Base com gradiente radial
+    const bgGradient = ctx.createRadialGradient(size * 0.3, size * 0.3, 0, size * 0.5, size * 0.5, size);
+    bgGradient.addColorStop(0, '#9A9A9A');
+    bgGradient.addColorStop(0.5, '#808080');
+    bgGradient.addColorStop(1, '#606060');
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Ruído Perlin multi-oitava
+    const imageData = ctx.getImageData(0, 0, size, size);
+    const data = imageData.data;
+
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const i = (y * size + x) * 4;
+        const noise1 = fractalNoise(x * 0.05, y * 0.05, 6);
+        const noise2 = fractalNoise(x * 0.2, y * 0.2, 3);
+        const factor = 0.5 + noise1 * 0.4 + noise2 * 0.1;
+
+        data[i] = Math.floor(data[i] * factor);
+        data[i + 1] = Math.floor(data[i + 1] * factor);
+        data[i + 2] = Math.floor(data[i + 2] * factor);
+      }
+    }
+    ctx.putImageData(imageData, 0, 0);
+
+    // Formações rochosas (camadas sedimentares)
+    for (let layer = 0; layer < 8; layer++) {
+      const y = (layer / 8) * size + Math.random() * 8;
+      const thickness = 2 + Math.random() * 4;
+      const shade = Math.random() * 60 - 30;
+
+      ctx.fillStyle = `rgba(${128 + shade}, ${128 + shade}, ${128 + shade}, ${0.2 + Math.random() * 0.3})`;
+      ctx.fillRect(0, y, size, thickness);
+
+      // Variação dentro da camada
+      for (let i = 0; i < size / 2; i++) {
+        const x = Math.random() * size;
+        const localShade = Math.random() * 30 - 15;
+        ctx.fillStyle = `rgba(${128 + shade + localShade}, ${128 + shade + localShade}, ${128 + shade + localShade}, 0.3)`;
+        ctx.fillRect(x, y, 4, thickness);
+      }
+    }
+
+    // Veios minerais complexos
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const segments = 5 + Math.floor(Math.random() * 8);
+      const veinType = Math.random();
+
+      let color;
+      if (veinType < 0.3) {
+        color = `rgba(${180 + Math.random() * 40}, ${180 + Math.random() * 40}, ${180 + Math.random() * 40}, 0.5)`;
+      } else if (veinType < 0.6) {
+        color = `rgba(${140 + Math.random() * 30}, ${120 + Math.random() * 30}, ${100 + Math.random() * 30}, 0.4)`;
+      } else {
+        color = `rgba(${100 + Math.random() * 30}, ${100 + Math.random() * 30}, ${120 + Math.random() * 40}, 0.4)`;
+      }
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 0.5 + Math.random() * 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+
+      let currentX = x;
+      let currentY = y;
+
+      for (let j = 0; j < segments; j++) {
+        currentX += (Math.random() - 0.5) * 12;
+        currentY += (Math.random() - 0.5) * 12;
+        ctx.lineTo(currentX, currentY);
+
+        // Ramificações
+        if (Math.random() > 0.7) {
+          const branchX = currentX + (Math.random() - 0.5) * 8;
+          const branchY = currentY + (Math.random() - 0.5) * 8;
+          ctx.moveTo(currentX, currentY);
+          ctx.lineTo(branchX, branchY);
+          ctx.moveTo(currentX, currentY);
+        }
+      }
+      ctx.stroke();
+    }
+
+    // Rachaduras profundas e realistas
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const segments = 3 + Math.floor(Math.random() * 5);
+
+      // Sombra da rachadura
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.lineWidth = 1 + Math.random() * 2;
+      ctx.lineCap = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+
+      let currentX = x;
+      let currentY = y;
+
+      for (let j = 0; j < segments; j++) {
+        currentX += (Math.random() - 0.5) * 10;
+        currentY += (Math.random() - 0.5) * 10;
+        ctx.lineTo(currentX, currentY);
+      }
+      ctx.stroke();
+
+      // Luz na borda da rachadura
+      ctx.strokeStyle = 'rgba(160, 160, 160, 0.3)';
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    }
+
+    // Cristais pequenos e brilhantes
+    for (let i = 0; i < 50; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const size_crystal = 0.5 + Math.random() * 2;
+
+      // Cristal
+      ctx.fillStyle = `rgba(${220 + Math.random() * 35}, ${220 + Math.random() * 35}, ${240 + Math.random() * 15}, ${0.4 + Math.random() * 0.4})`;
+      ctx.fillRect(x, y, size_crystal, size_crystal);
+
+      // Brilho especular
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.fillRect(x, y, size_crystal * 0.5, size_crystal * 0.5);
+    }
+
+    // Poros e imperfeições
+    for (let i = 0; i < 100; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const r = 0.3 + Math.random() * 1;
+
+      ctx.fillStyle = 'rgba(40, 40, 40, 0.5)';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Iluminação direcional forte
+    applyLighting(ctx, 0, 0, size, size, 0.25);
+  }
+
+  function createUltraRealisticWoodTexture(ctx, size) {
+    // Base com gradiente de madeira
+    const bgGradient = ctx.createLinearGradient(0, 0, size, 0);
+    bgGradient.addColorStop(0, '#7A5230');
+    bgGradient.addColorStop(0.5, '#654321');
+    bgGradient.addColorStop(1, '#5A3A1F');
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Centro do tronco
+    const centerX = size / 2 + (Math.random() - 0.5) * size * 0.2;
+    const centerY = size / 2 + (Math.random() - 0.5) * size * 0.2;
+
+    // Anéis de crescimento ultra-realistas
+    const numRings = 15 + Math.floor(Math.random() * 10);
+    const maxRadius = Math.sqrt(2) * size;
+
+    for (let ring = 0; ring < numRings; ring++) {
+      const baseRadius = (ring / numRings) * maxRadius;
+      const thickness = 2 + Math.random() * 5;
+      const isDarkRing = ring % 2 === 0;
+      const shade = isDarkRing ? -20 - Math.random() * 20 : 10 + Math.random() * 20;
+      const opacity = 0.3 + Math.random() * 0.4;
+
+      ctx.strokeStyle = `rgba(${80 + shade}, ${50 + shade}, ${20 + shade}, ${opacity})`;
+      ctx.lineWidth = thickness;
+
+      ctx.beginPath();
+
+      // Anel irregular e natural
+      for (let angle = 0; angle <= Math.PI * 2; angle += 0.05) {
+        const noise1 = perlinNoise(Math.cos(angle) * 2, Math.sin(angle) * 2);
+        const noise2 = perlinNoise(Math.cos(angle * 3) * 0.5, Math.sin(angle * 3) * 0.5);
+        const variation = noise1 * 8 + noise2 * 3;
+        const radius = baseRadius + variation;
+
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+
+        if (angle === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // Variação de densidade dentro do anel
+      if (isDarkRing) {
+        ctx.strokeStyle = `rgba(${60 + shade}, ${40 + shade}, ${15 + shade}, ${opacity * 0.5})`;
+        ctx.lineWidth = thickness * 0.3;
+        ctx.stroke();
+      }
+    }
+
+    // Veios verticais (fibras da madeira)
+    for (let i = 0; i < 80; i++) {
+      const x = Math.random() * size;
+      const segments = 3 + Math.floor(Math.random() * 4);
+      const shade = Math.random() * 40 - 20;
+
+      ctx.strokeStyle = `rgba(${70 + shade}, ${45 + shade}, ${18 + shade}, ${0.15 + Math.random() * 0.2})`;
+      ctx.lineWidth = 0.3 + Math.random() * 1;
+      ctx.lineCap = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+
+      let currentX = x;
+      let currentY = 0;
+
+      for (let j = 0; j < segments; j++) {
+        currentX += (Math.random() - 0.5) * 3;
+        currentY += size / segments;
+        ctx.lineTo(currentX, currentY);
+      }
+      ctx.stroke();
+    }
+
+    // Nós da madeira (defeitos naturais)
+    const numKnots = 2 + Math.floor(Math.random() * 4);
+    for (let i = 0; i < numKnots; i++) {
+      const kx = Math.random() * size;
+      const ky = Math.random() * size;
+      const kRadius = 4 + Math.random() * 12;
+      const shade = -30 - Math.random() * 30;
+
+      // Círculos concêntricos do nó
+      for (let r = 0; r < kRadius; r += 0.5 + Math.random()) {
+        const ringShade = shade + Math.random() * 20;
+        const alpha = 0.3 + (1 - r / kRadius) * 0.5;
+
+        ctx.strokeStyle = `rgba(${60 + ringShade}, ${40 + ringShade}, ${15 + ringShade}, ${alpha})`;
+        ctx.lineWidth = 1 + Math.random() * 2;
+
+        ctx.beginPath();
+
+        // Nó irregular
+        for (let angle = 0; angle <= Math.PI * 2; angle += 0.2) {
+          const noise = perlinNoise(Math.cos(angle) * 5, Math.sin(angle) * 5);
+          const radius = r + noise * 2;
+          const x = kx + Math.cos(angle) * radius;
+          const y = ky + Math.sin(angle) * radius;
+
+          if (angle === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // Centro do nó (mais escuro)
+      const centerGrad = ctx.createRadialGradient(kx, ky, 0, kx, ky, kRadius * 0.3);
+      centerGrad.addColorStop(0, `rgba(${40 + shade}, ${25 + shade}, ${10 + shade}, 0.8)`);
+      centerGrad.addColorStop(1, `rgba(${50 + shade}, ${30 + shade}, ${12 + shade}, 0.4)`);
+      ctx.fillStyle = centerGrad;
+      ctx.beginPath();
+      ctx.arc(kx, ky, kRadius * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Textura de poros (pequenos buracos)
+    for (let i = 0; i < 150; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const r = 0.2 + Math.random() * 0.8;
+
+      ctx.fillStyle = 'rgba(40, 25, 10, 0.4)';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Manchas e variações de cor
+    for (let i = 0; i < 30; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 3 + Math.random() * 10;
+      const shade = Math.random() * 30 - 15;
+
+      const spotGrad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      spotGrad.addColorStop(0, `rgba(${90 + shade}, ${60 + shade}, ${30 + shade}, 0.3)`);
+      spotGrad.addColorStop(1, `rgba(${90 + shade}, ${60 + shade}, ${30 + shade}, 0)`);
+      ctx.fillStyle = spotGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Iluminação com reflexos de verniz
+    applyLighting(ctx, 0, 0, size, size, 0.18);
+
+    // Brilho especular (verniz)
+    const glossGrad = ctx.createRadialGradient(size * 0.3, size * 0.3, 0, size * 0.5, size * 0.5, size * 0.8);
+    glossGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+    glossGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.05)');
+    glossGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = glossGrad;
+    ctx.fillRect(0, 0, size, size);
+  }
+
+  function createUltraRealisticLeavesTexture(ctx, size) {
+    // Base verde com variação
+    const bgGradient = ctx.createRadialGradient(size * 0.4, size * 0.4, 0, size * 0.5, size * 0.5, size);
+    bgGradient.addColorStop(0, '#32A832');
+    bgGradient.addColorStop(0.5, '#228B22');
+    bgGradient.addColorStop(1, '#1A6B1A');
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Ruído de fundo para densidade
+    const imageData = ctx.getImageData(0, 0, size, size);
+    const data = imageData.data;
+
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const i = (y * size + x) * 4;
+        const noise = fractalNoise(x * 0.12, y * 0.12, 4);
+        const factor = 0.6 + noise * 0.4;
+
+        data[i] = Math.floor(data[i] * factor);
+        data[i + 1] = Math.floor(data[i + 1] * factor);
+        data[i + 2] = Math.floor(data[i + 2] * factor);
+      }
+    }
+    ctx.putImageData(imageData, 0, 0);
+
+    // Folhas individuais detalhadas
+    for (let i = 0; i < 100; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const leafSize = 3 + Math.random() * 6;
+      const angle = Math.random() * Math.PI * 2;
+      const shade = Math.random() * 80 - 40;
+      const alpha = 0.4 + Math.random() * 0.4;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      // Forma da folha (elíptica com ponta)
+      const leafGrad = ctx.createLinearGradient(-leafSize, 0, leafSize, 0);
+      leafGrad.addColorStop(0, `rgba(${40 + shade}, ${160 + shade}, ${40 + shade}, ${alpha})`);
+      leafGrad.addColorStop(0.5, `rgba(${50 + shade}, ${200 + shade}, ${50 + shade}, ${alpha})`);
+      leafGrad.addColorStop(1, `rgba(${45 + shade}, ${180 + shade}, ${45 + shade}, ${alpha * 0.8})`);
+
+      ctx.fillStyle = leafGrad;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, leafSize, leafSize * 1.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Nervura central
+      ctx.strokeStyle = `rgba(${30 + shade}, ${120 + shade}, ${30 + shade}, ${alpha * 0.8})`;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(0, -leafSize * 1.4);
+      ctx.lineTo(0, leafSize * 1.4);
+      ctx.stroke();
+
+      // Nervuras secundárias
+      for (let j = 0; j < 4; j++) {
+        const offset = (j - 1.5) * leafSize * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(0, offset);
+        ctx.lineTo(-leafSize * 0.7, offset - leafSize * 0.3);
+        ctx.moveTo(0, offset);
+        ctx.lineTo(leafSize * 0.7, offset - leafSize * 0.3);
+        ctx.stroke();
+      }
+
+      // Destaque (reflexo de luz)
+      ctx.fillStyle = `rgba(150, 255, 100, ${alpha * 0.3})`;
+      ctx.beginPath();
+      ctx.ellipse(-leafSize * 0.3, -leafSize * 0.5, leafSize * 0.3, leafSize * 0.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Áreas de sombra (profundidade)
+    for (let i = 0; i < 40; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 4 + Math.random() * 10;
+
+      const shadowGrad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      shadowGrad.addColorStop(0, 'rgba(10, 50, 10, 0.5)');
+      shadowGrad.addColorStop(0.5, 'rgba(20, 70, 20, 0.3)');
+      shadowGrad.addColorStop(1, 'rgba(20, 70, 20, 0)');
+      ctx.fillStyle = shadowGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Áreas iluminadas (luz solar filtrada)
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const radius = 3 + Math.random() * 8;
+
+      const lightGrad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      lightGrad.addColorStop(0, 'rgba(150, 255, 100, 0.4)');
+      lightGrad.addColorStop(0.5, 'rgba(100, 230, 80, 0.2)');
+      lightGrad.addColorStop(1, 'rgba(100, 230, 80, 0)');
+      ctx.fillStyle = lightGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Buracos e imperfeições (insetos)
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const r = 1 + Math.random() * 3;
+
+      // Buraco com sombra
+      ctx.fillStyle = 'rgba(0, 20, 0, 0.7)';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Borda do buraco
+      ctx.strokeStyle = 'rgba(60, 40, 20, 0.5)';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Gotículas de água
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const r = 0.8 + Math.random() * 2;
+
+      const dropGrad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 0, x, y, r);
+      dropGrad.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+      dropGrad.addColorStop(0.4, 'rgba(200, 240, 255, 0.5)');
+      dropGrad.addColorStop(1, 'rgba(150, 220, 240, 0.2)');
+      ctx.fillStyle = dropGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Brilho especular
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.beginPath();
+      ctx.arc(x - r * 0.4, y - r * 0.4, r * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Iluminação ambiente
+    applyLighting(ctx, 0, 0, size, size, 0.12);
+  }
+
+  // ============================================
+  // SUBSTITUA A CHAMADA createTexture POR createEnhancedTexture
+  // ============================================
+
+  function createMaterialsWithEmissive() {
+    for (let type in blockTypes) {
+      const block = blockTypes[type];
+
+      // Usar texturas ultra-realistas para blocos principais
+      let texture;
+      if (['grass', 'dirt', 'stone', 'wood', 'leaves'].includes(type)) {
+        // Criar texturas ultra-realistas
+        const canvas = document.createElement('canvas');
+        canvas.width = 128; // Maior resolução
+        canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+
+        switch(type) {
+          case 'grass':
+            createUltraRealisticGrassTexture(ctx, 128);
+            break;
+          case 'dirt':
+            createUltraRealisticDirtTexture(ctx, 128);
+            break;
+          case 'stone':
+            createUltraRealisticStoneTexture(ctx, 128);
+            break;
+          case 'wood':
+            createUltraRealisticWoodTexture(ctx, 128);
+            break;
+          case 'leaves':
+            createUltraRealisticLeavesTexture(ctx, 128);
+            break;
+        }
+
+        texture = new THREE.CanvasTexture(canvas);
+        texture.magFilter = THREE.LinearFilter; // Filtro suave para maior qualidade
+        texture.minFilter = THREE.LinearMipmapLinearFilter;
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy(); // Máxima qualidade
+      } else {
+        // Usar função original para outros blocos
+        texture = createEnhancedTexture(type);
+      }
+
+      if (block.emissive) {
+        materials[type] = new THREE.MeshBasicMaterial({
+          map: texture,
+          emissive: block.color,
+          emissiveIntensity: 0.8
+        });
+      } else if (type === 'glass' || type === 'ice') {
+        materials[type] = new THREE.MeshLambertMaterial({
+          map: texture,
+          transparent: true,
+          opacity: 0.7,
+          side: THREE.DoubleSide
+        });
+      } else if (type === 'water') {
+        materials[type] = new THREE.MeshLambertMaterial({
+          map: texture,
+          transparent: true,
+          opacity: 0.6,
+          side: THREE.DoubleSide
+        });
+      } else if (type === 'leaves') {
+        materials[type] = new THREE.MeshLambertMaterial({
+          map: texture,
+          transparent: true,
+          opacity: 0.9,
+          side: THREE.DoubleSide,
+          alphaTest: 0.5
+        });
+      } else {
+        materials[type] = new THREE.MeshLambertMaterial({
+          map: texture,
+          flatShading: false
+        });
+      }
+    }
+  }
+
+
+
+  // ============================================
+  // SISTEMA DE ILUMINAÇÃO REALISTA
+  // ============================================
+
+  const lightingSystem = {
+    lights: new Map(),
+    maxLights: 50, // Limite para performance
+    lightRange: 12,
+    updateQueue: []
+  };
+
+  // Adicionar luz para bloco emissivo
+  function addBlockLight(x, y, z, type) {
+    const blockInfo = blockTypes[type];
+    if (!blockInfo || !blockInfo.emissive) return;
+
+    const lightKey = `${x},${y},${z}`;
+
+    // Remover luz existente se houver
+    removeBlockLight(x, y, z);
+
+    // Configurar cor e intensidade baseado no tipo de bloco
+    let color, intensity, distance;
+
+    switch(type) {
+      case 'torch':
+        color = 0xFF8C00;
+        intensity = 1.5;
+        distance = 10;
+        break;
+      case 'lantern':
+        color = 0xFFD700;
+        intensity = 2.0;
+        distance = 12;
+        break;
+      case 'glowstone':
+        color = 0xFFFF99;
+        intensity = 2.5;
+        distance = 14;
+        break;
+      default:
+        color = blockInfo.color;
+        intensity = 1.2;
+        distance = 10;
+    }
+
+    // Criar luz pontual
+    const light = new THREE.PointLight(color, intensity, distance);
+    light.position.set(x, y, z);
+    light.castShadow = true;
+
+    // Configurar sombras suaves
+    light.shadow.mapSize.width = 512;
+    light.shadow.mapSize.height = 512;
+    light.shadow.camera.near = 0.5;
+    light.shadow.camera.far = distance;
+    light.shadow.bias = -0.0001;
+
+    scene.add(light);
+
+    lightingSystem.lights.set(lightKey, {
+      light: light,
+      type: type,
+      x: x,
+      y: y,
+      z: z
+    });
+
+    // Adicionar efeito de partículas para tochas
+    if (type === 'torch') {
+      addTorchParticles(x, y, z);
+    }
+
+    return light;
+  }
+
+  // Remover luz de bloco
+  function removeBlockLight(x, y, z) {
+    const lightKey = `${x},${y},${z}`;
+    const lightData = lightingSystem.lights.get(lightKey);
+
+    if (lightData) {
+      scene.remove(lightData.light);
+      lightData.light.dispose();
+      lightingSystem.lights.delete(lightKey);
+    }
+  }
+
+  // Atualizar luzes próximas ao jogador
+  function updateDynamicLighting() {
+    const playerPos = camera.position;
+    const updateRadius = 30;
+
+    lightingSystem.lights.forEach((lightData, key) => {
+      const dx = lightData.x - playerPos.x;
+      const dy = lightData.y - playerPos.y;
+      const dz = lightData.z - playerPos.z;
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+      // Otimização: desativar luzes muito distantes
+      if (dist > updateRadius) {
+        lightData.light.visible = false;
+      } else {
+        lightData.light.visible = true;
+
+        // Efeito de cintilação suave para tochas
+        if (lightData.type === 'torch') {
+          const flicker = 0.95 + Math.sin(Date.now() * 0.01 + lightData.x) * 0.05;
+          lightData.light.intensity = 1.5 * flicker;
+        }
+      }
+    });
+  }
+
+  // Adicionar partículas de fogo para tochas
+  function addTorchParticles(x, y, z) {
+    if (!particleSystem) return;
+
+    setInterval(() => {
+      // Verificar se a tocha ainda existe
+      const block = getBlock(x, y, z);
+      if (!block || block.type !== 'torch') return;
+
+      // Emitir partículas de fumaça/fogo
+      const colors = [0xFF8C00, 0xFF6B00, 0xFFB347, 0x888888];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+
+      particleSystem.emit(
+              new THREE.Vector3(x + (Math.random() - 0.5) * 0.2, y + 0.5, z + (Math.random() - 0.5) * 0.2),
+              color,
+              2,
+              0.05
+      );
+    }, 200);
+  }
+
+  // Sistema de iluminação ambiente dinâmica
+  function updateAmbientLighting() {
+    const timeOfDay = dayNightCycle;
+
+    // Simular ciclo dia/noite
+    const sunIntensity = Math.max(0.3, Math.sin(timeOfDay * Math.PI * 2) * 0.7 + 0.5);
+
+    // Atualizar luz direcional (sol)
+    scene.traverse(obj => {
+      if (obj.isDirectionalLight) {
+        obj.intensity = sunIntensity;
+
+        // Mover posição do sol
+        const sunAngle = timeOfDay * Math.PI * 2;
+        obj.position.set(
+                Math.cos(sunAngle) * 100,
+                Math.sin(sunAngle) * 100,
+                50
+        );
+      }
+
+      if (obj.isAmbientLight) {
+        obj.intensity = 0.4 + sunIntensity * 0.3;
+      }
+    });
+
+    // Ajustar cor do céu
+    if (sky && sky.material) {
+      const skyColor = new THREE.Color();
+      if (sunIntensity > 0.5) {
+        // Dia
+        skyColor.setHSL(0.55, 0.7, 0.5 + sunIntensity * 0.3);
+      } else {
+        // Noite
+        skyColor.setHSL(0.6, 0.3, 0.1 + sunIntensity * 0.2);
+      }
+      sky.material.color = skyColor;
+    }
+  }
+
+  // Escanear e adicionar luzes para blocos existentes
+  function scanAndAddLights(chunkX, chunkZ) {
+    const sx = chunkX * CHUNK_SIZE;
+    const sz = chunkZ * CHUNK_SIZE;
+
+    for (let x = sx; x < sx + CHUNK_SIZE; x++) {
+      for (let z = sz; z < sz + CHUNK_SIZE; z++) {
+        for (let y = 0; y < 50; y++) {
+          const block = getBlock(x, y, z);
+          if (block && blockTypes[block.type] && blockTypes[block.type].emissive) {
+            addBlockLight(x, y, z, block.type);
+          }
+        }
+      }
+    }
+  }
+
+  // Remover luzes de chunk descarregado
+  function removeLightsInChunk(chunkX, chunkZ) {
+    const sx = chunkX * CHUNK_SIZE;
+    const sz = chunkZ * CHUNK_SIZE;
+    const ex = sx + CHUNK_SIZE;
+    const ez = sz + CHUNK_SIZE;
+
+    const lightsToRemove = [];
+
+    lightingSystem.lights.forEach((lightData, key) => {
+      if (lightData.x >= sx && lightData.x < ex &&
+              lightData.z >= sz && lightData.z < ez) {
+        lightsToRemove.push(key);
+      }
+    });
+
+    lightsToRemove.forEach(key => {
+      const [x, y, z] = key.split(',').map(Number);
+      removeBlockLight(x, y, z);
+    });
+  }
+
+  // Sistema de iluminação volumétrica (god rays)
+  function addVolumetricLighting() {
+    // Adicionar luz volumétrica sutil
+    const volumetricLight = new THREE.SpotLight(0xffffff, 0.3);
+    volumetricLight.position.set(50, 100, 50);
+    volumetricLight.angle = Math.PI / 6;
+    volumetricLight.penumbra = 0.5;
+    volumetricLight.decay = 2;
+    volumetricLight.distance = 200;
+
+    volumetricLight.castShadow = true;
+    volumetricLight.shadow.mapSize.width = 1024;
+    volumetricLight.shadow.mapSize.height = 1024;
+
+    scene.add(volumetricLight);
+
+    return volumetricLight;
+  }
+
+  // Iluminação especial para água
+  function addWaterLighting(x, y, z) {
+    const waterLight = new THREE.PointLight(0x4499FF, 0.3, 8);
+    waterLight.position.set(x, y, z);
+    scene.add(waterLight);
+
+    return waterLight;
+  }
+
+  // Efeito de brilho para blocos especiais
+  function addGlowEffect(mesh, color, intensity = 1) {
+    mesh.traverse(child => {
+      if (child.isMesh && child.material) {
+        child.material.emissive = new THREE.Color(color);
+        child.material.emissiveIntensity = intensity;
+      }
+    });
+  }
+
+
+
+
 
 
 
