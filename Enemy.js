@@ -3137,7 +3137,7 @@ function spawnEnemies(chunkX, chunkZ) {
     const sz = chunkZ * CHUNK_SIZE;
 
     // ✅ REDUZIDO: 0 a 2 inimigos por chunk (antes era 2-5)
-    const spawnCount = Math.floor(Math.random() * 1); // 0, 1 ou 2 inimigos
+    const spawnCount = Math.floor(Math.random() * 2); // 0, 1 ou 2 inimigos
 
     for (let i = 0; i < spawnCount; i++) {
         const x = sx + Math.random() * CHUNK_SIZE;
